@@ -4,16 +4,23 @@ services:
     image: grafana/grafana:9.2.0
     ports:
       - "3000:3000"
+    container_name: grafana-9.2.0
     depends_on:
       - postgres
   postgres:
     image: postgres:14
+    container_name: postgres
     environment:
       - POSTGRES_DB=postgres
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
   python:
     image: python:3.10-bullseye
+    container_name: python-3.10
+    stdin_open: true
+    tty: true
+    volumes: 
+      - /home/joycej/git/:/data
     depends_on:
       - postgres
     
