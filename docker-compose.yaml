@@ -10,6 +10,8 @@ services:
   postgres:
     image: postgres:14
     container_name: postgres
+    ports:
+      - 5432:5432
     environment:
       - POSTGRES_DB=postgres
       - POSTGRES_USER=postgres
@@ -19,6 +21,8 @@ services:
     container_name: python-3.10
     stdin_open: true
     tty: true
+    volumes: 
+      - /home/joycej/git/:/data
     depends_on:
       - postgres
     
