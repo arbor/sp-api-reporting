@@ -11,7 +11,7 @@ services:
     image: postgres:14
     container_name: postgres
     ports:
-      - 5432:5432
+      - "5432:5432"
     environment:
       - POSTGRES_DB=postgres
       - POSTGRES_USER=postgres
@@ -19,10 +19,13 @@ services:
   python:
     image: python:3.10-bullseye
     container_name: python-3.10
+    ports:
+      - "8080:8080"
     stdin_open: true
     tty: true
     volumes: 
       - /home/joycej/git/:/data
+      - /etc/resolv.conf:/etc/resolv.conf
     depends_on:
       - postgres
     

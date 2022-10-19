@@ -7,7 +7,7 @@ import logging
 import psycopg2
 
 
-class PGClient():
+class PGClient:
     def __init__(self, host, database, user, password):
         self.host = host
         self.user = user
@@ -17,22 +17,22 @@ class PGClient():
         
     def pg_connect(self):
         try:
-            logging.info('## Connecting to database...', '')
+            logging.info(' Connecting to database...')
             
             self.pg_conn = psycopg2.connect(
                 host=self.host,
                 database=self.db,
                 user=self.user,
                 password=self.password)
-            
             logging.info(' DONE')
+            return self.pg_conn
         except (Exception, psycopg2.DatabaseError) as error:
             logging.error(error)
 
     def pg_close(self):
         try:
             if self.pg_conn is not None:
-                logging.info('## Closing database...', '')
+                logging.info('Closing database')
                 self.pg_conn.close()
                 logging.info(' DONE')
                 
@@ -55,7 +55,7 @@ class PGClient():
             logging.error('!! ERROR: No database connection')
     
     def pg_init(self):
-        logging.info('## Creating database table and views ...', '')
+        logging.info('Creating database table and views ...')
                 
         sqls = ['''
         /* !!! DROP VIEWs !!!*/
@@ -368,7 +368,7 @@ class PGClient():
         alert_mitigations = alerts_with_mitigations[1]
 
         alerts_start_stop_time = {}
-        logging.info('## Updating alerts table...', '')
+        logging.info('## Updating alerts table...')
         
         cur = self.pg_conn.cursor()
         for alert in alerts:
@@ -423,7 +423,7 @@ class PGClient():
                     ;'''
             cur.execute(sql, sql_values)
         self.pg_conn.commit()
-        logging.info(' DONE', )
+        logging.info(' DONE')
             
         logging.info('## Updating alerts mitigation table...')
         cur = self.pg_conn.cursor()
@@ -508,13 +508,13 @@ class PGClient():
                 cur.execute(sql, [a_m_id])
             
             self.pg_conn.commit()
-            logging.info('## Updating alerts mitigation table... DONE', )
+            logging.info('## Updating alerts mitigation table... DONE')
             
 
 
 
     def pg_UPSERT_managed_objects(self, managed_objects):
-        logging.info('## Updating managed objects table...', '')
+        logging.info('## Updating managed objects table...')
         if True:
             cur = self.pg_conn.cursor()
             for managed_object in managed_objects:
@@ -528,11 +528,11 @@ class PGClient():
                         ;'''
                 cur.execute(sql, sql_values)
             self.pg_conn.commit()
-            logging.info(' DONE', )
+            logging.info(' DONE')
             
-            logging.info('## Updating managed objects last_update timestamp...', '')
+            logging.info('## Updating managed objects last_update timestamp...')
             sql = '''UPDATE operational_info SET managed_object__last_update = %s WHERE ID = 1;'''
             cur.execute(sql, [datetime.utcnow().isoformat()])
             self.pg_conn.commit()
             
-            logging.info(' DONE', )
+            logging.info(' DONE')

@@ -10,7 +10,7 @@ if CERT_verify == False:
 	urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
  
  
-class sl_client():
+class SPClient:
     
     def __init__(self, url, api_key):
         self.url = url
@@ -18,7 +18,7 @@ class sl_client():
         self.sl_conn = None
         self.perPage = "perPage=50" # default: "perPage=50"
             
-    def api_request(self, body=None):
+    def api_request(self, uri, key, body=None):
         api_response = None
         
         retry_cnt = 0
@@ -28,11 +28,11 @@ class sl_client():
             retry_cnt += 1
             try:
                 if body is None:
-                    api_response = requests.get(self.url, 
+                    api_response = requests.get(uri, 
                                                 headers={'X-Arbux-APIToken': self.api_key,
                                                          'Content-Type': 'application/vnd.api+json'}, verify=CERT_verify, timeout=(15,90))
                 else:
-                    api_response = requests.post(self.url, data=body, headers={'X-Arbux-APIToken': key, 'Content-Type': 'application/vnd.api+json'}, verify=CERT_verify, timeout=(15,90))
+                    api_response = requests.post(uri, data=body, headers={'X-Arbux-APIToken': key, 'Content-Type': 'application/vnd.api+json'}, verify=CERT_verify, timeout=(15,90))
                 request_OK = True
             except requests.exceptions.RequestException as e:
                 logging.info('')
@@ -78,7 +78,7 @@ class sl_client():
             api_page = 1
             URL = "https://" + self.url + URI + FILTER + "&page={}".format(api_page)
         
-        logging.info('## retrieving alerts: 0%', '')	
+        logging.info('## retrieving alerts: 0%')	
 
         api_response = self.api_request(URL, self.api_key)
         
@@ -99,9 +99,9 @@ class sl_client():
             if api_page_last != None:
                 for api_page in range(2,api_page_last+1):
                     URL = "https://" + self.url + URI + FILTER + "&page={}".format(api_page)
-                    api_response = self.api_request(URL, self.api)
+                    api_response = self.api_request(URL, self.api_key)
                     api_data.extend(api_response['data'])
-                    logging.info(' {:.1f}%'.format((api_page/api_page_last)*100), '')
+                    logging.info(' {:.1f}%'.format((api_page/api_page_last)*100))
             
             if (api_page_last == None or api_page_last == 1):
                 logging.info(' 100% DONE')
@@ -138,7 +138,7 @@ class sl_client():
                 logging.info(' + {}/{} - Alert Mitigation information retrieval for AlertID: {}'.format(alerts_mitigation_cnt, alerts_with_mitigations, alert['id']))
                 for mitigation in alert['relationships']['mitigation']['data']:
                     alert_mitigations_temp[mitigation['id']] = {'alert_id': alert['id'], 'mitigation_id': mitigation['id'], 'data': None, 'dropped_traffic_rates': None}
-                    alert_mitigations_temp[mitigation['id']]['data'] = get_mitigation_data(mitigation['id'])
+                    alert_mitigations_temp[mitigation['id']]['data'] = self.get_mitigation_data(mitigation['id'])
                     if 'tms' in mitigation['id']:
                         tms_mitigation_id_list.append(mitigation['id'])
                     if 'flowspec' in mitigation['id']:
@@ -148,15 +148,15 @@ class sl_client():
 
             if tms_mitigation_id_list != []:
                 for tms_mitigation_id in tms_mitigation_id_list:
-                    alert_mitigations_temp[tms_mitigation_id]['dropped_traffic_rates'] = get_tms_mitigation_rates(tms_mitigation_id, start_time, stop_time)
+                    alert_mitigations_temp[tms_mitigation_id]['dropped_traffic_rates'] = self.get_tms_mitigation_rates(tms_mitigation_id, start_time, stop_time)
             
             if fs_mitigation_id_list != []:
-                fs_mitigation_rates = get_alert_fs_mitigation_rates(alert['id'], fs_mitigation_id_list, start_time, stop_time)
+                fs_mitigation_rates = self.get_alert_fs_mitigation_rates(alert['id'], fs_mitigation_id_list, start_time, stop_time)
                 for fs_mitigation_id in fs_mitigation_rates:
                     alert_mitigations_temp[fs_mitigation_id]['dropped_traffic_rates'] = fs_mitigation_rates[fs_mitigation_id]
             
             if bh_mitigation_id_list != []:
-                bh_mitigation_rates = get_alert_bh_mitigation_rates(alert['id'], bh_mitigation_id_list, start_time, stop_time)
+                bh_mitigation_rates = self.get_alert_bh_mitigation_rates(alert['id'], bh_mitigation_id_list, start_time, stop_time)
                 # create fake BH mitigation with data from first actuall BH mitigation
                 fake_bh_id = 'blackhole-fake4rates-'+str(alert['id'])
                 alert_mitigations_temp[fake_bh_id] = {'alert_id': alert['id'], 'mitigation_id': fake_bh_id, 'data': None, 'dropped_traffic_rates': None}
@@ -172,19 +172,19 @@ class sl_client():
 
 
 
-    def get_alert_bh_mitigation_rates(alert_id, bh_list, timeseries_start, timeseries_end):
+    def get_alert_bh_mitigation_rates(self, alert_id, bh_list, timeseries_start, timeseries_end):
         alert_id = str(alert_id)
         
-        logging.info(' +++ Blackhole mitigation rate retrieval - Alert ID: ' + alert_id + ' ...', '')
+        logging.info(' +++ Blackhole mitigation rate retrieval - Alert ID: ' + alert_id + ' ...')
         URI = "/api/sp/alerts/{}/traffic/misuse_types/?query_unit=bps&query_view=blackhole&timeseries_end={}&timeseries_start={}".format(alert_id, timeseries_end, timeseries_start)
 
-        URL = "https://" + leader + URI
-        api_response = api_request(URL, apikey)
+        URL = "https://" + self.url + URI
+        api_response = self.api_request(URL, self.api_key)
         api_data_bps = api_response['data']
         
         URI = "/api/sp/alerts/{}/traffic/misuse_types/?query_unit=pps&query_view=blackhole&timeseries_end={}&timeseries_start={}".format(alert_id, timeseries_end, timeseries_start)
-        URL = "https://" + leader + URI
-        api_response = api_request(URL, apikey)
+        URL = "https://" + self.url + URI
+        api_response = self.api_request(URL, self.api_key)
         api_data_pps = api_response['data']
         
         fake_bh_id = 'blackhole-fake4rates-'+alert_id
@@ -218,17 +218,17 @@ class sl_client():
 
 
 
-    def get_alert_fs_mitigation_rates(alert_id, fs_list, timeseries_start, timeseries_end):
-        logging.info(' +++ Flowpsec mitigation rate retrieval - Alert ID: ' + str(alert_id) + ' ...', '')
+    def get_alert_fs_mitigation_rates(self, alert_id, fs_list, timeseries_start, timeseries_end):
+        logging.info(' +++ Flowpsec mitigation rate retrieval - Alert ID: ' + str(alert_id) + ' ...')
 
         URI = "/api/sp/alerts/{}/traffic/flowspecs/?query_unit=bps&query_view=flowspec&timeseries_end={}&timeseries_start={}".format(alert_id, timeseries_end, timeseries_start)
-        URL = "https://" + leader + URI
-        api_response = api_request(URL, apikey)
+        URL = "https://" + self.url + URI
+        api_response = self.api_request(URL, self.api_key)
         api_data_bps = api_response['data']
         
         URI = "/api/sp/alerts/{}/traffic/flowspecs/?query_unit=pps&query_view=flowspec&timeseries_end={}&timeseries_start={}".format(alert_id, timeseries_end, timeseries_start)
-        URL = "https://" + leader + URI
-        api_response = api_request(URL, apikey)
+        URL = "https://" + self.url + URI
+        api_response = self.api_request(URL, self.api_key)
         api_data_pps = api_response['data']
         
         fs_data_temp = {}
@@ -267,12 +267,12 @@ class sl_client():
 
 
 
-    def get_tms_mitigation_rates(mitigation_id, timeseries_start, timeseries_end):
-        logging.info(' +++ TMS mitigation rate retrieval - ID: ' + str(mitigation_id) + ' ...', '')
+    def get_tms_mitigation_rates(self, mitigation_id, timeseries_start, timeseries_end):
+        logging.info(' +++ TMS mitigation rate retrieval - ID: ' + str(mitigation_id) + ' ...')
         
         URI = "/api/sp/mitigations/{}/rates_all_devices?timeseries_end={}&timeseries_start={}".format(mitigation_id, timeseries_end, timeseries_start )
-        URL = "https://" + leader + URI
-        api_response = api_request(URL, apikey)
+        URL = "https://" + self.url + URI
+        api_response = self.api_request(URL, self.api_key)
         
         try:
             api_data = api_response['data']['attributes']
@@ -304,15 +304,15 @@ class sl_client():
 
 
 
-    def get_mitigation_data(mitigation_id):
-        logging.info(' +++ mitigation data retrieval - Mitigation ID: ' + str(mitigation_id) + ' ...', '')
+    def get_mitigation_data(self, mitigation_id):
+        logging.info(' +++ mitigation data retrieval - Mitigation ID: ' + str(mitigation_id) + ' ...')
 
         URI = "/api/sp/mitigations/{}".format(mitigation_id) 
-        URL = "https://" + leader + URI
-        api_response = api_request(URL, apikey)
+        URL = "https://" + self.url + URI
+        api_response = self.api_request(URL, self.api_key)
         
         api_data = api_response['data']
-        logging.info(' DONE')
+        logging.info('DONE')
 
         return api_data
 
@@ -322,11 +322,11 @@ class sl_client():
         logging.info('### Managed Objects retrieval')
         
         URI = "/api/sp/managed_objects/?" + self.perPage
-        URL = "https://" + leader + URI
+        URL = "https://" + self.url + URI
         
-        logging.info('## retrieving managed objects: 0%', '')	
+        logging.info('## retrieving managed objects: 0%')	
         
-        api_response = api_request(URL, apikey)
+        api_response = self.api_request(URL, self.api_key)
         
         api_data = api_response['data']
         
@@ -337,10 +337,10 @@ class sl_client():
         
         if api_page_last != None:
             for api_page in range(2,api_page_last+1):
-                URL = "https://" + leader + URI + "&page={}".format(api_page)
-                api_response = api_request(URL, apikey)
+                URL = "https://" + self.url + URI + "&page={}".format(api_page)
+                api_response = self.api_request(URL, self.api_key)
                 api_data.extend(api_response['data'])
-                logging.info(' {:.1f}%'.format((api_page/api_page_last)*100), '')
+                logging.info(' {:.1f}%'.format((api_page/api_page_last)*100))
         
         if (api_page_last == None or api_page_last == 1):
             logging.info(' 100% DONE')
