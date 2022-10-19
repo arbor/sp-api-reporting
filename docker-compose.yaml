@@ -24,7 +24,6 @@ services:
     stdin_open: true
     tty: true
     volumes: 
-      - /home/joycej/git/:/data
       - /etc/resolv.conf:/etc/resolv.conf
     depends_on:
       - postgres
