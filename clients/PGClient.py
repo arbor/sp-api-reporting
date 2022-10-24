@@ -3,12 +3,15 @@
 from datetime import datetime, timedelta
 
 import logging
-
+import os
+from pathlib import Path
 import psycopg2
 
 
 class PGClient:
     def __init__(self, host, database, user, password):
+        source_path = Path(__file__).resolve()
+        self.sql_path = os.path.join(source_path.parent, 'sql')
         self.host = host
         self.user = user
         self.db = database
@@ -56,310 +59,21 @@ class PGClient:
     
     def pg_init(self):
         logging.info('Creating database table and views ...')
-                
-        sqls = ['''
-        /* !!! DROP VIEWs !!!*/
-        
-        /* v_operational_info */
-        DROP VIEW IF EXISTS v_operational_info;
-        
-        /* v_alert_types__of_alerts */
-        DROP VIEW IF EXISTS v_alert_types__of_alerts;
-        
-        /* v_directions__of_alerts */
-        DROP VIEW IF EXISTS v_directions__of_alerts;
-        
-        /* v_managed_object_names__of_alerts */
-        DROP VIEW IF EXISTS v_managed_object_names__of_alerts;
-        
-        /* v_security_levels__of_alerts */
-        DROP VIEW IF EXISTS v_security_levels__of_alerts;
-
-        /* v_mitigation_subtypes__of_alerts */
-        DROP VIEW IF EXISTS v_mitigation_subtypes__of_alerts;
-
-        /* v_alert */
-        DROP VIEW IF EXISTS v_alert;
-
-        /* v_alert_mitigations */
-        DROP VIEW IF EXISTS v_alert_mitigations;
-        
-        /* !!! DROP TABLES !!!*/
-        /* operational_info */
-        /* ---- */ DROP TABLE IF EXISTS operational_info; /* */
-
-        /* mapper_managed_object */
-        /* ---- */ DROP TABLE IF EXISTS mapper_managed_object; /* */
-        
-        /* mapper_alert_type */
-        DROP TABLE IF EXISTS mapper_alert_type;
-        
-        /* mapper_alert_importance */
-        DROP TABLE IF EXISTS mapper_alert_importance;
-
-        /* mapper_mitigation_subtype */
-        DROP TABLE IF EXISTS mapper_mitigation_subtype;
-        
-        /* alert_mitigations */
-        /* ---- */ DROP TABLE IF EXISTS alert_mitigations; /* */
-        
-        /* alert */
-        /* ---- */ DROP TABLE IF EXISTS alert; /* */
-        
-        /* !!! CREATE TABLES !!!*/
-
-        /* alert */
-        CREATE TABLE IF NOT EXISTS alert (
-            id integer NOT NULL PRIMARY KEY,
-            alert_class text,
-            alert_type text,
-            classification text,
-            importance smallint,
-            ongoing boolean,
-            start_time timestamp without time zone,
-            stop_time timestamp without time zone,
-            countries text[],
-            direction text,
-            fast_detected boolean DEFAULT false,
-            host_address inet,
-            impact_boundary text,
-            impact_bps double precision,
-            impact_pps double precision,
-            ip_version smallint,
-            misuse_types text[],
-            protocols text[],
-            severity_percent double precision,
-            severity_threshold double precision,
-            severity_unit text,
-            managed_object_id integer,
-            last_updated timestamp without time zone
-            );
-
-        /* alert_mitigations */
-        CREATE TABLE IF NOT EXISTS alert_mitigations (
-            id text NOT NULL PRIMARY KEY,
-            mitigation_id text,
-            alert_id integer,
-            name text,
-            subtype text,
-            is_automitigation boolean,
-            user_name text,
-            ongoing boolean,
-            start timestamp without time zone,
-            stop timestamp without time zone,
-            r_drop_bps_avg double precision,
-            r_drop_bps_max double precision,
-            r_drop_bps_sum double precision,
-            r_drop_bps_timeseries double precision[],
-            r_drop_bps_timeseries_start timestamp without time zone,
-            r_drop_bps_step integer,
-            r_drop_pps_avg double precision,
-            r_drop_pps_max double precision,
-            r_drop_pps_sum double precision,
-            r_drop_pps_timeseries double precision[],
-            r_drop_pps_timeseries_start timestamp without time zone,
-            r_drop_pps_step integer,
-            last_updated timestamp without time zone);
-
-        /* alert_mitigations */
-        CREATE TABLE mapper_alert_importance (
-            id smallint NOT NULL PRIMARY KEY,
-            importance_txt character varying(6));
-        INSERT INTO mapper_alert_importance VALUES (0, 'Low');
-        INSERT INTO mapper_alert_importance VALUES (2, 'High');
-        INSERT INTO mapper_alert_importance VALUES (1, 'Medium');
-        
-        /* alert_mitigations */
-        CREATE TABLE mapper_alert_type (
-            id character varying(30) NOT NULL PRIMARY KEY,
-            alert_type_txt character varying(30));
-        INSERT INTO mapper_alert_type VALUES ('dos_host_detection', 'Host Detection');
-        INSERT INTO mapper_alert_type VALUES ('dos_profiled_router', 'Profiled Router');
-        INSERT INTO mapper_alert_type VALUES ('dos_profiled_network', 'Profiled Network');
-        
-        /* mapper_mitigation_subtype */
-        CREATE TABLE mapper_mitigation_subtype (
-            subtype character varying(15) NOT NULL PRIMARY KEY,
-            subtype_txt text NOT NULL);
-        INSERT INTO mapper_mitigation_subtype VALUES ('tms', 'TMS');
-        INSERT INTO mapper_mitigation_subtype VALUES ('flowspec', 'FlowSpec');
-        INSERT INTO mapper_mitigation_subtype VALUES ('blackhole', 'Blackhole');
-
-
-        /* mapper_managed_object */
-        CREATE TABLE IF NOT EXISTS mapper_managed_object (
-                    id integer NOT NULL PRIMARY KEY,
-                    managed_object_name text,
-                    last_updated timestamp without time zone
-                    );
-        INSERT INTO mapper_managed_object VALUES (1, 'Profiled all', '1970-01-01 00:00:00') ON CONFLICT (id) DO NOTHING;
-        INSERT INTO mapper_managed_object VALUES (10, 'Dark IP', '1970-01-01 00:00:00') ON CONFLICT (id) DO NOTHING;
-        INSERT INTO mapper_managed_object VALUES (11, 'Multicast', '1970-01-01 00:00:00') ON CONFLICT (id) DO NOTHING;
-        INSERT INTO mapper_managed_object VALUES (27, 'Internet', '1970-01-01 00:00:00') ON CONFLICT (id) DO NOTHING;
-        INSERT INTO mapper_managed_object VALUES (28, 'All Subscribers', '1970-01-01 00:00:00') ON CONFLICT (id) DO NOTHING;
-        INSERT INTO mapper_managed_object VALUES (71, 'Global Detection', '1970-01-01 00:00:00') ON CONFLICT (id) DO NOTHING;
-            
-        /* operational_info */
-        CREATE TABLE IF NOT EXISTS operational_info (
-            id serial NOT NULL PRIMARY KEY,
-            alert__last_update timestamp without time zone,
-            managed_object__last_update timestamp without time zone,
-            tables_revision smallint
-            );
-        
-        INSERT INTO operational_info (id, alert__last_update, managed_object__last_update, tables_revision) VALUES (1, '1970-01-01 02:00:00', '1970-01-01 02:00:00', 2) ON CONFLICT (id) DO NOTHING;
-        ''',
-        '''
-        /* !!! CREATE VIEWs !!!*/
-
-        /* v_alert_mitigations */
-        CREATE OR REPLACE VIEW v_alert_mitigations
-            AS
-            SELECT alert_mitigations.id,
-                alert_mitigations.mitigation_id,
-                alert_mitigations.alert_id,
-                alert_mitigations.name,
-                alert_mitigations.subtype,
-                mapper_mitigation_subtype.subtype_txt,
-                alert_mitigations.is_automitigation,
-                alert_mitigations.user_name,
-                alert_mitigations.ongoing,
-                alert_mitigations.start,
-                alert_mitigations.stop,
-                (alert_mitigations.r_drop_bps_sum /8)::bigint as r_drop_bytes,
-                alert_mitigations.r_drop_pps_sum as r_drop_packets,
-                alert_mitigations.r_drop_bps_max,
-                alert_mitigations.r_drop_pps_max,
-                alert_mitigations.last_updated
-                FROM alert_mitigations
-                JOIN mapper_mitigation_subtype ON alert_mitigations.subtype = mapper_mitigation_subtype.subtype::text;
-        
-        /* v_alert */
-        CREATE OR REPLACE VIEW v_alert
-            AS
-            SELECT alert.id,
-                alert.alert_class,
-                alert.alert_type,
-                mapper_alert_type.alert_type_txt,
-                alert.classification,
-                alert.importance,
-                mapper_alert_importance.importance_txt,
-                alert.ongoing,
-                (alert.start_time AT TIME ZONE 'utc'::text) AS start_time,
-                (alert.stop_time AT TIME ZONE 'utc'::text) AS stop_time,
-                COALESCE(alert.stop_time - alert.start_time, alert.last_updated::timestamp(0) without time zone - alert.start_time::timestamp(0) without time zone) AS duration,
-                alert.countries,
-                alert.direction,
-                alert.fast_detected,
-                alert.host_address,
-                alert.impact_boundary,
-                COALESCE(alert.impact_bps, 0) as impact_bps,
-                COALESCE(alert.impact_pps, 0) as impact_pps,
-                alert.ip_version,
-                alert.misuse_types,
-                alert.protocols,
-                alert.severity_percent,
-                alert.severity_threshold,
-                alert.severity_unit,
-                alert.managed_object_id,
-                COALESCE(mapper_managed_object.managed_object_name, 'unkown'::text) AS managed_object_name,
-                array_agg(DISTINCT COALESCE(v_alert_mitigations.subtype_txt, 'None')) AS mitigation_types,
-                CASE
-                    WHEN sum(v_alert_mitigations.is_automitigation::integer) > 0 THEN true
-                    ELSE false
-                END AS automitigation,
-                CASE
-                    WHEN count(v_alert_mitigations.subtype) > 0 THEN true
-                    ELSE false
-                END AS mitigated,
-                COALESCE(sum(v_alert_mitigations.r_drop_bps_max) FILTER (WHERE v_alert_mitigations.subtype = 'tms'), 0) AS r_drop_bps_max_tms,
-                COALESCE(sum(v_alert_mitigations.r_drop_pps_max) FILTER (WHERE v_alert_mitigations.subtype = 'tms'), 0) AS r_drop_pps_max_tms,
-                COALESCE(sum(v_alert_mitigations.r_drop_bps_max) FILTER (WHERE v_alert_mitigations.subtype = 'flowspec'), 0) AS r_drop_bps_max_flowspec,
-                COALESCE(sum(v_alert_mitigations.r_drop_pps_max) FILTER (WHERE v_alert_mitigations.subtype = 'flowspec'), 0) AS r_drop_pps_max_flowspec,
-                COALESCE(sum(v_alert_mitigations.r_drop_bps_max) FILTER (WHERE v_alert_mitigations.subtype = 'blackhole'), 0) AS r_drop_bps_max_blackhole,
-                COALESCE(sum(v_alert_mitigations.r_drop_pps_max) FILTER (WHERE v_alert_mitigations.subtype = 'blackhole'), 0) AS r_drop_pps_max_blackhole,
-                COALESCE(sum(v_alert_mitigations.r_drop_bps_max) FILTER (WHERE v_alert_mitigations.subtype = 'flowspec' or v_alert_mitigations.subtype = 'tms'), 0) AS r_drop_bps_max_tms_and_flowspec,
-                COALESCE(sum(v_alert_mitigations.r_drop_pps_max) FILTER (WHERE v_alert_mitigations.subtype = 'flowspec' or v_alert_mitigations.subtype = 'tms'), 0) AS r_drop_pps_max_tms_and_flowspec,
-                COALESCE(sum(v_alert_mitigations.r_drop_bps_max) FILTER (WHERE v_alert_mitigations.subtype = 'flowspec' or v_alert_mitigations.subtype = 'tms' or v_alert_mitigations.subtype = 'blackhole'), 0) AS r_drop_bps_max_tms_and_flowspec_and_blackhole,
-                COALESCE(sum(v_alert_mitigations.r_drop_pps_max) FILTER (WHERE v_alert_mitigations.subtype = 'flowspec' or v_alert_mitigations.subtype = 'tms' or v_alert_mitigations.subtype = 'blackhole'), 0) AS r_drop_pps_max_tms_and_flowspec_and_blackhole,
-                COALESCE(sum(v_alert_mitigations.r_drop_bytes) FILTER (WHERE v_alert_mitigations.subtype = 'tms'), 0) AS r_drop_bytes_tms,
-                COALESCE(sum(v_alert_mitigations.r_drop_packets) FILTER (WHERE v_alert_mitigations.subtype = 'tms'), 0) AS r_drop_packets_tms,
-                COALESCE(sum(v_alert_mitigations.r_drop_bytes) FILTER (WHERE v_alert_mitigations.subtype = 'flowspec'), 0) AS r_drop_bytes_flowspec,
-                COALESCE(sum(v_alert_mitigations.r_drop_packets) FILTER (WHERE v_alert_mitigations.subtype = 'flowspec'), 0) AS r_drop_packets_flowspec,
-                COALESCE(sum(v_alert_mitigations.r_drop_bytes) FILTER (WHERE v_alert_mitigations.subtype = 'blackhole'), 0) AS r_drop_bytes_blackhole,
-                COALESCE(sum(v_alert_mitigations.r_drop_packets) FILTER (WHERE v_alert_mitigations.subtype = 'blackhole'), 0) AS r_drop_packets_blackhole,
-                COALESCE(sum(v_alert_mitigations.r_drop_bytes) FILTER (WHERE v_alert_mitigations.subtype = 'flowspec' or v_alert_mitigations.subtype = 'tms'), 0) AS r_drop_bytes_tms_and_flowspec,
-                COALESCE(sum(v_alert_mitigations.r_drop_packets) FILTER (WHERE v_alert_mitigations.subtype = 'flowspec' or v_alert_mitigations.subtype = 'tms'), 0) AS r_drop_packets_tms_and_flowspec,
-                COALESCE(sum(v_alert_mitigations.r_drop_bytes) FILTER (WHERE v_alert_mitigations.subtype = 'flowspec' or v_alert_mitigations.subtype = 'tms' or v_alert_mitigations.subtype = 'blackhole'), 0) AS r_drop_bytes_tms_and_flowspec_and_blackhole,
-                COALESCE(sum(v_alert_mitigations.r_drop_packets) FILTER (WHERE v_alert_mitigations.subtype = 'flowspec' or v_alert_mitigations.subtype = 'tms' or v_alert_mitigations.subtype = 'blackhole'), 0) AS r_drop_packets_tms_and_flowspec_and_blackhole,
-                (alert.last_updated AT TIME ZONE 'utc'::text) AS last_updated
-                FROM alert
-                JOIN mapper_alert_importance ON alert.importance = mapper_alert_importance.id
-                JOIN mapper_alert_type ON alert.alert_type = mapper_alert_type.id::text
-                LEFT JOIN mapper_managed_object ON alert.managed_object_id = mapper_managed_object.id
-                LEFT JOIN v_alert_mitigations ON alert.id = v_alert_mitigations.alert_id
-                GROUP BY alert.id, mapper_alert_type.alert_type_txt, mapper_alert_importance.importance_txt, mapper_managed_object.managed_object_name;
-        
-        /* v_alert_types__of_alerts */
-        CREATE OR REPLACE VIEW v_alert_types__of_alerts
-            AS
-            SELECT alert_type_txt
-                FROM v_alert
-            GROUP BY alert_type_txt;
-        
-        /* v_directions__of_alerts */
-        CREATE OR REPLACE VIEW v_directions__of_alerts
-            AS
-            SELECT direction
-                FROM v_alert
-            GROUP BY direction;
-        
-        /* v_managed_object_names__of_alerts */
-        CREATE OR REPLACE VIEW v_managed_object_names__of_alerts
-            AS
-            SELECT managed_object_name
-                FROM v_alert
-            GROUP BY managed_object_name;
-        
-        /* v_security_levels__of_alerts */
-        CREATE OR REPLACE VIEW v_security_levels__of_alerts
-            AS
-            SELECT importance_txt
-                FROM v_alert
-            GROUP BY importance_txt;
-
-        /* v_mitigation_subtypes__of_alerts */
-        CREATE OR REPLACE VIEW v_mitigation_subtypes__of_alerts
-        AS
-        SELECT unnest(v_alert.mitigation_types) AS mitigation_subtypes
-            FROM v_alert
-            GROUP BY (unnest(v_alert.mitigation_types));
-
-
-        /* v_operational_info */
-        CREATE OR REPLACE VIEW v_operational_info
-        AS
-        SELECT id,
-            (alert__last_update AT TIME ZONE 'utc'::text) AS alert__last_update,
-            (managed_object__last_update AT TIME ZONE 'utc'::text) AS managed_object__last_update
-            FROM operational_info;
-
-        
-        '''
-        ]
-        
         try:
-            cur = self.pg_conn.cursor()
-            
-            for sql in sqls:
-                #logging.info(sql)
-                cur.execute(sql)
+            pg_conn = self.pg_conn
+            cur = pg_conn.cursor()
+            sql_dir = self.sql_path
+            for sql_file in (f'{sql_dir}/drop_views.sql',
+                             f'{sql_dir}/drop_tables.sql',
+                             f'{sql_dir}/create_tables.sql',
+                             f'{sql_dir}/create_views.sql'):
+                cur.execute(open(sql_file, 'r').read())
+                pg_conn.commit()
 
-            self.pg_conn.commit()
             logging.info(' DONE')
-            
+
         except (Exception, psycopg2.DatabaseError) as error:
-            logging.info(error)
+            logging.error(error)
 
                 
 
@@ -510,6 +224,63 @@ class PGClient:
             self.pg_conn.commit()
             logging.info('## Updating alerts mitigation table... DONE')
             
+
+    def check_table_row_count(self, table: str, exp_cnt: int):
+        cnt = self.get_table_row_count(table)
+        if cnt != exp_cnt:
+            raise psycopg2.DataError(f'For table {table}, expected {exp_cnt} but found {cnt}')
+        return True
+
+    def get_table_row_count(self, table: str) -> int:
+        pg_conn = self.pg_conn
+        if not pg_conn:
+            return 0
+        try:
+            cur = pg_conn.cursor()
+            query_count_sql = f'SELECT COUNT(*) FROM {table};'
+            cur.execute(query_count_sql)
+            result = cur.fetchall()
+            return result[0][0]
+
+        except (Exception, psycopg2.DatabaseError) as error:
+            logging.error(error)
+
+        return 0
+
+
+    def verify(self):
+        logging.info('## Verifying expected data has been populated...', '')
+
+        # Check that 7 tables have the expected number of rows
+        try:
+            # Check counts of certain tables
+            self.check_table_row_count('alert', 0)
+            self.check_table_row_count('alert_mitigations', 0)
+            self.check_table_row_count('mapper_alert_importance', 3)
+            self.check_table_row_count('mapper_alert_type', 3)
+            self.check_table_row_count('mapper_mitigation_subtype', 3)
+            self.check_table_row_count('mapper_managed_object', 6)
+            self.check_table_row_count('operational_info', 1)
+        except (psycopg2.DataError) as error:
+            logging.error(error)
+            return False
+
+        # Check that at least one expected data value is there
+        pg_conn = self.pg_conn
+        if not pg_conn:
+            return False
+        try:
+            cur = pg_conn.cursor()
+            query_sql = 'SELECT managed_object_name FROM mapper_managed_object WHERE id = 10;'
+            cur.execute(query_sql)
+            result = cur.fetchall()
+            if not result[0][0] == 'Dark IP':
+                return False
+        except (Exception, psycopg2.DatabaseError) as error:
+            logging.error(error)
+
+        logging.info(' DONE')
+        return True
 
 
 
