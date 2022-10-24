@@ -9,7 +9,8 @@ services:
       - postgres
   postgres:
     container_name: postgres
-    image: netscoutngeniuspulse/sp-api-reporting-postgres:latest
+    image: postgres:14
+    # image: netscoutngeniuspulse/sp-api-reporting-postgres:latest
     environment:
       - POSTGRES_DB=postgres
       - POSTGRES_USER=postgres
@@ -17,14 +18,9 @@ services:
   python:
     image: netscoutngeniuspulse/sp-api-reporting-python:latest
     container_name: python-3.10
-    ports:
-      - "8080:8080"
     stdin_open: true
     tty: true
     env_file:
       - .env
-    volumes: 
-      - /etc/resolv.conf:/etc/resolv.conf
     depends_on:
       - postgres
-

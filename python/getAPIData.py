@@ -18,7 +18,7 @@ import psycopg2
 
 ### Parameters
 # - DB details
-pg_host = "172.23.0.2"
+pg_host = "postgres"
 pg_database = "postgres"
 pg_user = "postgres"
 pg_password = "postgres"
@@ -650,12 +650,12 @@ def get_alerts(start_time = datetime(1970, 1, 1).isoformat(), alert_id = None):
 		URL = "https://" + leader + URI
 	else:
 		URI = "/api/sp/alerts/?" + perPage + "&filter="
-		#start_time = '2022-06-08T09:00:00Z' # for testing to limit runtime just fetching some alerts
-		#stop_time = '2022-06-08T11:00:00Z' # for testing to limit runtime just fetching some alerts
+		start_time = '2022-10-20T00:00:00Z' # for testing to limit runtime just fetching some alerts
+		stop_time = '2022-10-21T00:00:00Z' # for testing to limit runtime just fetching some alerts
 		FILTERs = 	['/data/attributes/alert_class=dos',
 					#'/data/attributes/alert_type=dos_host_detection', # for testing to limit runtime just fetching some alerts
-					'/data/attributes/start_time>' + start_time#,
-					#'/data/attributes/stop_time<' + stop_time # for testing to limit runtime just fetching some alerts
+					'/data/attributes/start_time>' + start_time,
+					'/data/attributes/stop_time<' + stop_time # for testing to limit runtime just fetching some alerts
 					]
 		if alert_id != None:
 			FILTERs += ['/data/id={}'.format(alert_id)]
