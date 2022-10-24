@@ -18,9 +18,9 @@ import psycopg2
 
 ### Parameters
 # - DB details
-pg_host = "postgres"
+pg_host     = "postgres"
 pg_database = "postgres"
-pg_user = "postgres"
+pg_user     = "postgres"
 pg_password = "postgres"
 
 # - SL details ** PROVIDE DETAILS 
