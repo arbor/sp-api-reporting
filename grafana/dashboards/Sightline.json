@@ -1,14 +1,4 @@
 {
-  "__inputs": [
-    {
-      "name": "DS_SIGHTLINE",
-      "label": "Sightline",
-      "description": "",
-      "type": "datasource",
-      "pluginId": "postgres",
-      "pluginName": "PostgreSQL"
-    }
-  ],
   "__elements": {},
   "__requires": [
     {
@@ -80,7 +70,7 @@
     {
       "datasource": {
         "type": "postgres",
-        "uid": "${DS_SIGHTLINE}"
+        "uid": "yNW9VHH4z"
       },
       "fieldConfig": {
         "defaults": {
@@ -125,7 +115,7 @@
         {
           "datasource": {
             "type": "postgres",
-            "uid": "${DS_SIGHTLINE}"
+            "uid": ""
           },
           "format": "table",
           "group": [],
@@ -161,7 +151,7 @@
     {
       "datasource": {
         "type": "postgres",
-        "uid": "${DS_SIGHTLINE}"
+        "uid": "yNW9VHH4z"
       },
       "fieldConfig": {
         "defaults": {
@@ -219,7 +209,7 @@
         {
           "datasource": {
             "type": "postgres",
-            "uid": "${DS_SIGHTLINE}"
+            "uid": "yNW9VHH4z"
           },
           "format": "table",
           "group": [],
@@ -255,7 +245,7 @@
     {
       "datasource": {
         "type": "postgres",
-        "uid": "${DS_SIGHTLINE}"
+        "uid": "yNW9VHH4z"
       },
       "description": "",
       "fieldConfig": {
@@ -509,7 +499,7 @@
         {
           "datasource": {
             "type": "postgres",
-            "uid": "${DS_SIGHTLINE}"
+            "uid": "yNW9VHH4z"
           },
           "format": "table",
           "group": [
@@ -585,7 +575,7 @@
     {
       "datasource": {
         "type": "postgres",
-        "uid": "${DS_SIGHTLINE}"
+        "uid": "yNW9VHH4z"
       },
       "fieldConfig": {
         "defaults": {
@@ -653,7 +643,7 @@
         {
           "datasource": {
             "type": "postgres",
-            "uid": "${DS_SIGHTLINE}"
+            "uid": "yNW9VHH4z"
           },
           "format": "table",
           "group": [],
@@ -697,7 +687,7 @@
     {
       "datasource": {
         "type": "postgres",
-        "uid": "${DS_SIGHTLINE}"
+        "uid": "yNW9VHH4z"
       },
       "fieldConfig": {
         "defaults": {
@@ -859,7 +849,7 @@
         {
           "datasource": {
             "type": "postgres",
-            "uid": "${DS_SIGHTLINE}"
+            "uid": "yNW9VHH4z"
           },
           "format": "table",
           "group": [],
@@ -903,7 +893,7 @@
     {
       "datasource": {
         "type": "postgres",
-        "uid": "${DS_SIGHTLINE}"
+        "uid": "yNW9VHH4z"
       },
       "fieldConfig": {
         "defaults": {
@@ -985,7 +975,7 @@
         {
           "datasource": {
             "type": "postgres",
-            "uid": "${DS_SIGHTLINE}"
+            "uid": "yNW9VHH4z"
           },
           "format": "time_series",
           "group": [
@@ -1081,7 +1071,7 @@
     {
       "datasource": {
         "type": "postgres",
-        "uid": "${DS_SIGHTLINE}"
+        "uid": "yNW9VHH4z"
       },
       "fieldConfig": {
         "defaults": {
@@ -1159,7 +1149,7 @@
         {
           "datasource": {
             "type": "postgres",
-            "uid": "${DS_SIGHTLINE}"
+            "uid": "yNW9VHH4z"
           },
           "format": "time_series",
           "group": [
@@ -1255,7 +1245,7 @@
     {
       "datasource": {
         "type": "postgres",
-        "uid": "${DS_SIGHTLINE}"
+        "uid": "yNW9VHH4z"
       },
       "fieldConfig": {
         "defaults": {
@@ -1337,7 +1327,7 @@
         {
           "datasource": {
             "type": "postgres",
-            "uid": "${DS_SIGHTLINE}"
+            "uid": "yNW9VHH4z"
           },
           "format": "time_series",
           "group": [
@@ -1433,7 +1423,7 @@
     {
       "datasource": {
         "type": "postgres",
-        "uid": "${DS_SIGHTLINE}"
+        "uid": "yNW9VHH4z"
       },
       "fieldConfig": {
         "defaults": {
@@ -1511,7 +1501,7 @@
         {
           "datasource": {
             "type": "postgres",
-            "uid": "${DS_SIGHTLINE}"
+            "uid": "yNW9VHH4z"
           },
           "format": "time_series",
           "group": [
@@ -1607,7 +1597,7 @@
     {
       "datasource": {
         "type": "postgres",
-        "uid": "${DS_SIGHTLINE}"
+        "uid": "yNW9VHH4z"
       },
       "fieldConfig": {
         "defaults": {
@@ -1795,7 +1785,7 @@
         {
           "datasource": {
             "type": "postgres",
-            "uid": "${DS_SIGHTLINE}"
+            "uid": "yNW9VHH4z"
           },
           "format": "table",
           "group": [],
@@ -1839,7 +1829,7 @@
     {
       "datasource": {
         "type": "postgres",
-        "uid": "${DS_SIGHTLINE}"
+        "uid": "yNW9VHH4z"
       },
       "fieldConfig": {
         "defaults": {
@@ -2226,7 +2216,7 @@
         {
           "datasource": {
             "type": "postgres",
-            "uid": "${DS_SIGHTLINE}"
+            "uid": "yNW9VHH4z"
           },
           "format": "table",
           "group": [
@@ -2298,7 +2288,7 @@
     {
       "datasource": {
         "type": "postgres",
-        "uid": "${DS_SIGHTLINE}"
+        "uid": "yNW9VHH4z"
       },
       "fieldConfig": {
         "defaults": {
@@ -2427,7 +2417,7 @@
         {
           "datasource": {
             "type": "postgres",
-            "uid": "${DS_SIGHTLINE}"
+            "uid": "yNW9VHH4z"
           },
           "format": "time_series",
           "group": [
@@ -2523,7 +2513,7 @@
     {
       "datasource": {
         "type": "postgres",
-        "uid": "${DS_SIGHTLINE}"
+        "uid": "yNW9VHH4z"
       },
       "fieldConfig": {
         "defaults": {
@@ -2568,7 +2558,7 @@
         {
           "datasource": {
             "type": "postgres",
-            "uid": "${DS_SIGHTLINE}"
+            "uid": "yNW9VHH4z"
           },
           "format": "table",
           "group": [
@@ -2640,7 +2630,7 @@
     {
       "datasource": {
         "type": "postgres",
-        "uid": "${DS_SIGHTLINE}"
+        "uid": "yNW9VHH4z"
       },
       "fieldConfig": {
         "defaults": {
@@ -2685,7 +2675,7 @@
         {
           "datasource": {
             "type": "postgres",
-            "uid": "${DS_SIGHTLINE}"
+            "uid": "yNW9VHH4z"
           },
           "format": "table",
           "group": [
@@ -2757,7 +2747,7 @@
     {
       "datasource": {
         "type": "postgres",
-        "uid": "${DS_SIGHTLINE}"
+        "uid": "yNW9VHH4z"
       },
       "fieldConfig": {
         "defaults": {
@@ -2841,7 +2831,7 @@
         {
           "datasource": {
             "type": "postgres",
-            "uid": "${DS_SIGHTLINE}"
+            "uid": "yNW9VHH4z"
           },
           "format": "time_series",
           "group": [
@@ -2937,7 +2927,7 @@
     {
       "datasource": {
         "type": "postgres",
-        "uid": "${DS_SIGHTLINE}"
+        "uid": "yNW9VHH4z"
       },
       "fieldConfig": {
         "defaults": {
@@ -3020,7 +3010,7 @@
         {
           "datasource": {
             "type": "postgres",
-            "uid": "${DS_SIGHTLINE}"
+            "uid": "yNW9VHH4z"
           },
           "format": "time_series",
           "group": [
@@ -3116,7 +3106,7 @@
     {
       "datasource": {
         "type": "postgres",
-        "uid": "${DS_SIGHTLINE}"
+        "uid": "yNW9VHH4z"
       },
       "fieldConfig": {
         "defaults": {
@@ -3473,7 +3463,7 @@
         {
           "datasource": {
             "type": "postgres",
-            "uid": "${DS_SIGHTLINE}"
+            "uid": "yNW9VHH4z"
           },
           "format": "table",
           "group": [
@@ -3545,7 +3535,7 @@
     {
       "datasource": {
         "type": "postgres",
-        "uid": "${DS_SIGHTLINE}"
+        "uid": "yNW9VHH4z"
       },
       "fieldConfig": {
         "defaults": {
@@ -3676,7 +3666,7 @@
         {
           "datasource": {
             "type": "postgres",
-            "uid": "${DS_SIGHTLINE}"
+            "uid": "yNW9VHH4z"
           },
           "format": "time_series",
           "group": [
@@ -3772,7 +3762,7 @@
     {
       "datasource": {
         "type": "postgres",
-        "uid": "${DS_SIGHTLINE}"
+        "uid": "yNW9VHH4z"
       },
       "fieldConfig": {
         "defaults": {
@@ -3903,7 +3893,7 @@
         {
           "datasource": {
             "type": "postgres",
-            "uid": "${DS_SIGHTLINE}"
+            "uid": "yNW9VHH4z"
           },
           "format": "time_series",
           "group": [
@@ -3999,7 +3989,7 @@
     {
       "datasource": {
         "type": "postgres",
-        "uid": "${DS_SIGHTLINE}"
+        "uid": "yNW9VHH4z"
       },
       "fieldConfig": {
         "defaults": {
@@ -4357,7 +4347,7 @@
         {
           "datasource": {
             "type": "postgres",
-            "uid": "${DS_SIGHTLINE}"
+            "uid": "yNW9VHH4z"
           },
           "format": "table",
           "group": [
@@ -4429,7 +4419,7 @@
     {
       "datasource": {
         "type": "postgres",
-        "uid": "${DS_SIGHTLINE}"
+        "uid": "yNW9VHH4z"
       },
       "fieldConfig": {
         "defaults": {
@@ -4561,7 +4551,7 @@
         {
           "datasource": {
             "type": "postgres",
-            "uid": "${DS_SIGHTLINE}"
+            "uid": "yNW9VHH4z"
           },
           "format": "time_series",
           "group": [
@@ -4657,7 +4647,7 @@
     {
       "datasource": {
         "type": "postgres",
-        "uid": "${DS_SIGHTLINE}"
+        "uid": "yNW9VHH4z"
       },
       "fieldConfig": {
         "defaults": {
@@ -4849,7 +4839,7 @@
         {
           "datasource": {
             "type": "postgres",
-            "uid": "${DS_SIGHTLINE}"
+            "uid": "yNW9VHH4z"
           },
           "format": "table",
           "group": [
@@ -4925,7 +4915,7 @@
     {
       "datasource": {
         "type": "postgres",
-        "uid": "${DS_SIGHTLINE}"
+        "uid": "yNW9VHH4z"
       },
       "fieldConfig": {
         "defaults": {
@@ -5002,7 +4992,7 @@
         {
           "datasource": {
             "type": "postgres",
-            "uid": "${DS_SIGHTLINE}"
+            "uid": "yNW9VHH4z"
           },
           "format": "table",
           "group": [
@@ -5074,7 +5064,7 @@
     {
       "datasource": {
         "type": "postgres",
-        "uid": "${DS_SIGHTLINE}"
+        "uid": "yNW9VHH4z"
       },
       "fieldConfig": {
         "defaults": {
@@ -5157,7 +5147,7 @@
         {
           "datasource": {
             "type": "postgres",
-            "uid": "${DS_SIGHTLINE}"
+            "uid": "yNW9VHH4z"
           },
           "format": "time_series",
           "group": [
@@ -5253,7 +5243,7 @@
     {
       "datasource": {
         "type": "postgres",
-        "uid": "${DS_SIGHTLINE}"
+        "uid": "yNW9VHH4z"
       },
       "fieldConfig": {
         "defaults": {
@@ -5300,7 +5290,7 @@
         {
           "datasource": {
             "type": "postgres",
-            "uid": "${DS_SIGHTLINE}"
+            "uid": "yNW9VHH4z"
           },
           "format": "table",
           "group": [
@@ -5372,7 +5362,7 @@
     {
       "datasource": {
         "type": "postgres",
-        "uid": "${DS_SIGHTLINE}"
+        "uid": "yNW9VHH4z"
       },
       "fieldConfig": {
         "defaults": {
@@ -5463,7 +5453,7 @@
         {
           "datasource": {
             "type": "postgres",
-            "uid": "${DS_SIGHTLINE}"
+            "uid": "yNW9VHH4z"
           },
           "format": "table",
           "group": [
@@ -5535,7 +5525,7 @@
     {
       "datasource": {
         "type": "postgres",
-        "uid": "${DS_SIGHTLINE}"
+        "uid": "yNW9VHH4z"
       },
       "fieldConfig": {
         "defaults": {
@@ -5618,7 +5608,7 @@
         {
           "datasource": {
             "type": "postgres",
-            "uid": "${DS_SIGHTLINE}"
+            "uid": "yNW9VHH4z"
           },
           "format": "time_series",
           "group": [
@@ -5714,7 +5704,7 @@
     {
       "datasource": {
         "type": "postgres",
-        "uid": "${DS_SIGHTLINE}"
+        "uid": "yNW9VHH4z"
       },
       "fieldConfig": {
         "defaults": {
@@ -5850,7 +5840,7 @@
         {
           "datasource": {
             "type": "postgres",
-            "uid": "${DS_SIGHTLINE}"
+            "uid": "yNW9VHH4z"
           },
           "format": "table",
           "group": [
@@ -5922,7 +5912,7 @@
     {
       "datasource": {
         "type": "postgres",
-        "uid": "${DS_SIGHTLINE}"
+        "uid": "yNW9VHH4z"
       },
       "fieldConfig": {
         "defaults": {
@@ -6179,7 +6169,7 @@
         {
           "datasource": {
             "type": "postgres",
-            "uid": "${DS_SIGHTLINE}"
+            "uid": "yNW9VHH4z"
           },
           "format": "table",
           "group": [
@@ -6251,7 +6241,7 @@
     {
       "datasource": {
         "type": "postgres",
-        "uid": "${DS_SIGHTLINE}"
+        "uid": "yNW9VHH4z"
       },
       "fieldConfig": {
         "defaults": {
@@ -6334,7 +6324,7 @@
         {
           "datasource": {
             "type": "postgres",
-            "uid": "${DS_SIGHTLINE}"
+            "uid": "yNW9VHH4z"
           },
           "format": "time_series",
           "group": [
@@ -6430,7 +6420,7 @@
     {
       "datasource": {
         "type": "postgres",
-        "uid": "${DS_SIGHTLINE}"
+        "uid": "yNW9VHH4z"
       },
       "fieldConfig": {
         "defaults": {
@@ -6513,7 +6503,7 @@
         {
           "datasource": {
             "type": "postgres",
-            "uid": "${DS_SIGHTLINE}"
+            "uid": "yNW9VHH4z"
           },
           "format": "time_series",
           "group": [
@@ -6609,7 +6599,7 @@
     {
       "datasource": {
         "type": "postgres",
-        "uid": "${DS_SIGHTLINE}"
+        "uid": "yNW9VHH4z"
       },
       "fieldConfig": {
         "defaults": {
@@ -6692,7 +6682,7 @@
         {
           "datasource": {
             "type": "postgres",
-            "uid": "${DS_SIGHTLINE}"
+            "uid": "yNW9VHH4z"
           },
           "format": "time_series",
           "group": [
@@ -6788,7 +6778,7 @@
     {
       "datasource": {
         "type": "postgres",
-        "uid": "${DS_SIGHTLINE}"
+        "uid": "yNW9VHH4z"
       },
       "fieldConfig": {
         "defaults": {
@@ -6871,7 +6861,7 @@
         {
           "datasource": {
             "type": "postgres",
-            "uid": "${DS_SIGHTLINE}"
+            "uid": "yNW9VHH4z"
           },
           "format": "time_series",
           "group": [
@@ -6967,7 +6957,7 @@
     {
       "datasource": {
         "type": "postgres",
-        "uid": "${DS_SIGHTLINE}"
+        "uid": "yNW9VHH4z"
       },
       "fieldConfig": {
         "defaults": {
@@ -7103,7 +7093,7 @@
         {
           "datasource": {
             "type": "postgres",
-            "uid": "${DS_SIGHTLINE}"
+            "uid": "yNW9VHH4z"
           },
           "format": "table",
           "group": [
@@ -7175,7 +7165,7 @@
     {
       "datasource": {
         "type": "postgres",
-        "uid": "${DS_SIGHTLINE}"
+        "uid": "yNW9VHH4z"
       },
       "fieldConfig": {
         "defaults": {
@@ -7432,7 +7422,7 @@
         {
           "datasource": {
             "type": "postgres",
-            "uid": "${DS_SIGHTLINE}"
+            "uid": "yNW9VHH4z"
           },
           "format": "table",
           "group": [
@@ -7504,7 +7494,7 @@
     {
       "datasource": {
         "type": "postgres",
-        "uid": "${DS_SIGHTLINE}"
+        "uid": "yNW9VHH4z"
       },
       "fieldConfig": {
         "defaults": {
@@ -7587,7 +7577,7 @@
         {
           "datasource": {
             "type": "postgres",
-            "uid": "${DS_SIGHTLINE}"
+            "uid": "yNW9VHH4z"
           },
           "format": "time_series",
           "group": [
@@ -7683,7 +7673,7 @@
     {
       "datasource": {
         "type": "postgres",
-        "uid": "${DS_SIGHTLINE}"
+        "uid": "yNW9VHH4z"
       },
       "fieldConfig": {
         "defaults": {
@@ -7766,7 +7756,7 @@
         {
           "datasource": {
             "type": "postgres",
-            "uid": "${DS_SIGHTLINE}"
+            "uid": "yNW9VHH4z"
           },
           "format": "time_series",
           "group": [
@@ -7862,7 +7852,7 @@
     {
       "datasource": {
         "type": "postgres",
-        "uid": "${DS_SIGHTLINE}"
+        "uid": "yNW9VHH4z"
       },
       "fieldConfig": {
         "defaults": {
@@ -7939,7 +7929,7 @@
         {
           "datasource": {
             "type": "postgres",
-            "uid": "${DS_SIGHTLINE}"
+            "uid": "yNW9VHH4z"
           },
           "format": "table",
           "group": [],
@@ -7975,7 +7965,7 @@
     {
       "datasource": {
         "type": "postgres",
-        "uid": "${DS_SIGHTLINE}"
+        "uid": "yNW9VHH4z"
       },
       "fieldConfig": {
         "defaults": {
@@ -8052,7 +8042,7 @@
         {
           "datasource": {
             "type": "postgres",
-            "uid": "${DS_SIGHTLINE}"
+            "uid": "yNW9VHH4z"
           },
           "format": "table",
           "group": [],
@@ -8088,7 +8078,7 @@
     {
       "datasource": {
         "type": "postgres",
-        "uid": "${DS_SIGHTLINE}"
+        "uid": "yNW9VHH4z"
       },
       "fieldConfig": {
         "defaults": {
@@ -8136,7 +8126,7 @@
         {
           "datasource": {
             "type": "postgres",
-            "uid": "${DS_SIGHTLINE}"
+            "uid": "yNW9VHH4z"
           },
           "format": "table",
           "group": [],
@@ -8166,7 +8156,7 @@
     {
       "datasource": {
         "type": "postgres",
-        "uid": "${DS_SIGHTLINE}"
+        "uid": "yNW9VHH4z"
       },
       "fieldConfig": {
         "defaults": {
@@ -8233,7 +8223,7 @@
         {
           "datasource": {
             "type": "postgres",
-            "uid": "${DS_SIGHTLINE}"
+            "uid": "yNW9VHH4z"
           },
           "format": "table",
           "group": [],
@@ -8277,7 +8267,7 @@
     {
       "datasource": {
         "type": "postgres",
-        "uid": "${DS_SIGHTLINE}"
+        "uid": "yNW9VHH4z"
       },
       "fieldConfig": {
         "defaults": {
@@ -8398,7 +8388,7 @@
         {
           "datasource": {
             "type": "postgres",
-            "uid": "${DS_SIGHTLINE}"
+            "uid": "yNW9VHH4z"
           },
           "format": "table",
           "group": [
@@ -8470,7 +8460,7 @@
     {
       "datasource": {
         "type": "postgres",
-        "uid": "${DS_SIGHTLINE}"
+        "uid": "yNW9VHH4z"
       },
       "fieldConfig": {
         "defaults": {
@@ -8608,7 +8598,7 @@
         {
           "datasource": {
             "type": "postgres",
-            "uid": "${DS_SIGHTLINE}"
+            "uid": "yNW9VHH4z"
           },
           "format": "table",
           "group": [],
@@ -8652,7 +8642,7 @@
     {
       "datasource": {
         "type": "postgres",
-        "uid": "${DS_SIGHTLINE}"
+        "uid": "yNW9VHH4z"
       },
       "fieldConfig": {
         "defaults": {
@@ -8790,7 +8780,7 @@
         {
           "datasource": {
             "type": "postgres",
-            "uid": "${DS_SIGHTLINE}"
+            "uid": "yNW9VHH4z"
           },
           "format": "table",
           "group": [],
@@ -8834,7 +8824,7 @@
     {
       "datasource": {
         "type": "postgres",
-        "uid": "${DS_SIGHTLINE}"
+        "uid": "yNW9VHH4z"
       },
       "fieldConfig": {
         "defaults": {
@@ -8953,7 +8943,7 @@
         {
           "datasource": {
             "type": "postgres",
-            "uid": "${DS_SIGHTLINE}"
+            "uid": "yNW9VHH4z"
           },
           "format": "table",
           "group": [
@@ -9025,7 +9015,7 @@
     {
       "datasource": {
         "type": "postgres",
-        "uid": "${DS_SIGHTLINE}"
+        "uid": "yNW9VHH4z"
       },
       "fieldConfig": {
         "defaults": {
@@ -9336,7 +9326,7 @@
         {
           "datasource": {
             "type": "postgres",
-            "uid": "${DS_SIGHTLINE}"
+            "uid": "yNW9VHH4z"
           },
           "format": "table",
           "group": [
@@ -9408,7 +9398,7 @@
     {
       "datasource": {
         "type": "postgres",
-        "uid": "${DS_SIGHTLINE}"
+        "uid": "yNW9VHH4z"
       },
       "fieldConfig": {
         "defaults": {
@@ -9513,7 +9503,7 @@
         {
           "datasource": {
             "type": "postgres",
-            "uid": "${DS_SIGHTLINE}"
+            "uid": "yNW9VHH4z"
           },
           "format": "table",
           "group": [
@@ -9593,7 +9583,7 @@
         "current": {},
         "datasource": {
           "type": "postgres",
-          "uid": "${DS_SIGHTLINE}"
+          "uid": "yNW9VHH4z"
         },
         "definition": "select importance_txt from v_security_levels__of_alerts",
         "hide": 0,
@@ -9615,7 +9605,7 @@
         "current": {},
         "datasource": {
           "type": "postgres",
-          "uid": "${DS_SIGHTLINE}"
+          "uid": "yNW9VHH4z"
         },
         "definition": "select alert_type_txt from v_alert_types__of_alerts",
         "hide": 0,
@@ -9637,7 +9627,7 @@
         "current": {},
         "datasource": {
           "type": "postgres",
-          "uid": "${DS_SIGHTLINE}"
+          "uid": "yNW9VHH4z"
         },
         "definition": "select managed_object_name from v_managed_object_names__of_alerts",
         "hide": 0,
@@ -9659,7 +9649,7 @@
         "current": {},
         "datasource": {
           "type": "postgres",
-          "uid": "${DS_SIGHTLINE}"
+          "uid": "yNW9VHH4z"
         },
         "definition": "select ''\nunion all\nselect managed_object_name from v_managed_object_names__of_alerts;",
         "hide": 0,
@@ -9682,7 +9672,7 @@
         "current": {},
         "datasource": {
           "type": "postgres",
-          "uid": "${DS_SIGHTLINE}"
+          "uid": "yNW9VHH4z"
         },
         "definition": "select direction from v_directions__of_alerts",
         "hide": 0,
@@ -9724,7 +9714,7 @@
         "current": {},
         "datasource": {
           "type": "postgres",
-          "uid": "${DS_SIGHTLINE}"
+          "uid": "yNW9VHH4z"
         },
         "definition": "select mitigation_subtypes from v_mitigation_subtypes__of_alerts;",
         "hide": 0,
@@ -9953,7 +9943,7 @@
         "current": {},
         "datasource": {
           "type": "postgres",
-          "uid": "${DS_SIGHTLINE}"
+          "uid": "yNW9VHH4z"
         },
         "definition": "select name from pg_timezone_names order by name;",
         "hide": 0,
