@@ -8,23 +8,23 @@ services:
     depends_on:
       - postgres
   postgres:
-    image: postgres:14
     container_name: postgres
-    ports:
-      - "5432:5432"
+    image: netscoutngeniuspulse/sp-api-reporting-postgres:latest
     environment:
       - POSTGRES_DB=postgres
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
   python:
-    image: python:3.10-bullseye
+    image: netscoutngeniuspulse/sp-api-reporting-python:latest
     container_name: python-3.10
     ports:
       - "8080:8080"
     stdin_open: true
     tty: true
+    env_file:
+      - .env
     volumes: 
       - /etc/resolv.conf:/etc/resolv.conf
     depends_on:
       - postgres
-    
+
