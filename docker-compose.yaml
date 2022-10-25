@@ -4,7 +4,6 @@ services:
     image: grafana/grafana:9.2.0
     ports:
       - "3000:3000"
-    container_name: grafana-9.2.0
     volumes: 
       - ${PWD}/grafana/provisioning/postgres.yaml:/etc/grafana/provisioning/datasources/postgres.yaml
       - ${PWD}/grafana/provisioning/dashboard.yaml:/etc/grafana/provisioning/dashboards/dashboard.yaml
@@ -12,17 +11,18 @@ services:
     depends_on:
       - postgres
   postgres:
-    container_name: postgres
-    image: postgres:14
+    # Postgres 14 + SCRAM Issue: https://github.com/psycopg/psycopg2/issues/1360
+    image: postgres:13
     environment:
       - POSTGRES_DB=postgres
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
-  python:
-    image: netscoutngeniuspulse/sp-api-reporting-python:latest
-    container_name: python-3.10
-    stdin_open: true
-    tty: true
+  sp-ingest:
+    image: python:3.10-bullseye
+    volumes: 
+      - ${PWD}/sp-ingest/requirements.txt:/requirements.txt
+      - ${PWD}/sp-ingest/getAPIData.py:/getAPIData.py
+    command: sh -c  "pip install -r requirements.txt && python3 getAPIData.py"
     env_file:
       - .env
     depends_on:
