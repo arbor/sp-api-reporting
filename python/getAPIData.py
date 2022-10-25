@@ -61,8 +61,6 @@ def pg_connect():
 	global pg_conn
 	try:
 		v_print('## Connecting to database...', '')
-
-		v_print(pg_host)
 		
 		pg_conn = psycopg2.connect(
 			host=pg_host,
@@ -686,7 +684,6 @@ def get_alerts(start_time = datetime(1970, 1, 1).isoformat(), alert_id = None):
 		
 		if api_page_last != None:
 			for api_page in range(2,api_page_last+1):
-				v_print(api_page)
 				URL = "https://" + leader + URI + FILTER + "&page={}".format(api_page)
 				api_response = api_request(URL, apikey)
 				api_data.extend(api_response['data'])
