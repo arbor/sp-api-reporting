@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 
 from datetime import datetime, timedelta
-from PGClient import PGClient
 import sys
+sys.path.insert(1, '..')
+from PGClient import PGClient
 
 ### Parameters
 PG_HOST = "127.0.0.1"
