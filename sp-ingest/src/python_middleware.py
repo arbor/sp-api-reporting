@@ -7,20 +7,20 @@ from clients.SPClient import SPClient
 import argparse
 import logging
 logging.basicConfig(level=logging.INFO)
+import os
+from dotenv import load_dotenv
 
 # Parameters
 # - DB details
-PG_HOST = "127.0.0.1"
-PG_DB = "sightline"
-PG_USER = "SLadmin"
-PG_PASSWORD = "SLadmin"
+PG_HOST     = "postgres"
+PG_DB       = "postgres"
+PG_USER     = "postgres"
+PG_PASSWORD = "postgres"
 
 # - SL details ** PROVIDE DETAILS
-SL_LEADER = '172.18.11.115'  # leader IP
-SL_APITOKEN = 'Mx1WpcC2daFGU0J7f1kW7FoCKz3R4K_Syfw81tW_'  # REST API Token
-
-
-
+load_dotenv()
+SL_LEADER = os.environ.get('SL_LEADER') # leader IP 
+SL_APITOKEN = os.environ.get('SL_APITOKEN') # REST API Token
 
 class PythonMiddleware():
 
