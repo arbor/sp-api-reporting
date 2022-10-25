@@ -49,7 +49,7 @@ class PythonMiddleware():
         alerts = self.sp_client.get_alerts()
         self.pg_client.pg_UPSERT_alerts(alerts)
 
-        logging.info('## Updating alert last_update timestamp...', '')
+        logging.info('## Updating alert last_update timestamp...')
         sql = '''UPDATE operational_info SET alert__last_update = %s WHERE ID = 1;'''
         cur = self.pg_conn.cursor()
         cur.execute(sql, [datetime.utcnow().isoformat()])
@@ -73,7 +73,7 @@ class PythonMiddleware():
             alerts = self.sp_client.get_alerts(datetime(1970, 1, 1).isoformat())
 
         self.pg_client.pg_UPSERT_alerts(alerts)
-        logging.info('## Updating alert last_update timestamp...', '')
+        logging.info('## Updating alert last_update timestamp...')
         sql = '''UPDATE operational_info SET alert__last_update = %s WHERE ID = 1;'''
         cur.execute(sql, [datetime.utcnow().isoformat()])
         self.pg_conn.commit()
