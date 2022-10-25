@@ -1,4 +1,0 @@
-sql:
-  UPDATE: alert_mitigations
-  SET: r_drop_pps_sum = (SELECT sum(s) * r_drop_pps_step 
-  FROM: unnest(r_drop_pps_timeseries) s) where id = %s and r_drop_pps_sum IS NULL;
