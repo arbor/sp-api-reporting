@@ -5,6 +5,10 @@ services:
     ports:
       - "3000:3000"
     container_name: grafana-9.2.0
+    volumes: 
+      - ${PWD}/grafana/provisioning/postgres.yaml:/etc/grafana/provisioning/datasources/postgres.yaml
+      - ${PWD}/grafana/provisioning/dashboard.yaml:/etc/grafana/provisioning/dashboards/dashboard.yaml
+      - ${PWD}/grafana/dashboards/Sightline.json:/var/lib/grafana/dashboards/Sightline.json
     depends_on:
       - postgres
   postgres:
