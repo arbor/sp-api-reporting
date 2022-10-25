@@ -21,8 +21,8 @@ services:
     image: python:3.10-bullseye
     volumes: 
       - ${PWD}/sp-ingest/requirements.txt:/requirements.txt
-      - ${PWD}/sp-ingest/getAPIData.py:/getAPIData.py
-    command: sh -c  "pip install -r requirements.txt && python3 getAPIData.py"
+      - ${PWD}/sp-ingest/src:/src
+    command: sh -c  "pip install -r requirements.txt && python3 src/python_middleware.py --setup SETUP"
     env_file:
       - .env
     depends_on:

@@ -7,20 +7,20 @@ from clients.SPClient import SPClient
 import argparse
 import logging
 logging.basicConfig(level=logging.INFO)
+import os
+from dotenv import load_dotenv
 
 # Parameters
 # - DB details
-PG_HOST = "127.0.0.1"
-PG_DB = "sightline"
-PG_USER = "SLadmin"
-PG_PASSWORD = "SLadmin"
+PG_HOST     = "postgres"
+PG_DB       = "postgres"
+PG_USER     = "postgres"
+PG_PASSWORD = "postgres"
 
 # - SL details ** PROVIDE DETAILS
-SL_LEADER = '172.18.11.115'  # leader IP
-SL_APITOKEN = 'Mx1WpcC2daFGU0J7f1kW7FoCKz3R4K_Syfw81tW_'  # REST API Token
-
-
-
+load_dotenv()
+SL_LEADER = os.environ.get('SL_LEADER') # leader IP 
+SL_APITOKEN = os.environ.get('SL_APITOKEN') # REST API Token
 
 class PythonMiddleware():
 
@@ -49,7 +49,7 @@ class PythonMiddleware():
         alerts = self.sp_client.get_alerts()
         self.pg_client.pg_UPSERT_alerts(alerts)
 
-        logging.info('## Updating alert last_update timestamp...', '')
+        logging.info('## Updating alert last_update timestamp...')
         sql = '''UPDATE operational_info SET alert__last_update = %s WHERE ID = 1;'''
         cur = self.pg_conn.cursor()
         cur.execute(sql, [datetime.utcnow().isoformat()])
@@ -73,7 +73,7 @@ class PythonMiddleware():
             alerts = self.sp_client.get_alerts(datetime(1970, 1, 1).isoformat())
 
         self.pg_client.pg_UPSERT_alerts(alerts)
-        logging.info('## Updating alert last_update timestamp...', '')
+        logging.info('## Updating alert last_update timestamp...')
         sql = '''UPDATE operational_info SET alert__last_update = %s WHERE ID = 1;'''
         cur.execute(sql, [datetime.utcnow().isoformat()])
         self.pg_conn.commit()
