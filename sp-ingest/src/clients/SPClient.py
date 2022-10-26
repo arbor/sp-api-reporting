@@ -64,12 +64,12 @@ class SPClient:
             URL = "https://" + self.url + URI
         else:
             URI = "/api/sp/alerts/?" + self.perPage + "&filter="
-            start_time = '2022-10-20T12:00:00Z' # for testing to limit runtime just fetching some alerts
-            stop_time = '2022-10-21T00:00:00Z' # for testing to limit runtime just fetching some alerts
+            # start_time = '2022-10-20T12:00:00Z' # for testing to limit runtime just fetching some alerts
+            # stop_time = '2022-10-21T00:00:00Z' # for testing to limit runtime just fetching some alerts
             FILTERs = 	['/data/attributes/alert_class=dos',
                         #'/data/attributes/alert_type=dos_host_detection', # for testing to limit runtime just fetching some alerts
                         '/data/attributes/start_time>' + start_time,
-                        '/data/attributes/stop_time<' + stop_time # for testing to limit runtime just fetching some alerts
+                        # '/data/attributes/stop_time<' + stop_time # for testing to limit runtime just fetching some alerts
                         ]
             if alert_id != None:
                 FILTERs += ['/data/id={}'.format(alert_id)]
