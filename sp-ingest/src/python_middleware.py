@@ -12,21 +12,37 @@ from dotenv import load_dotenv
 
 # Parameters
 # - DB details
-PG_HOST     = postgres
-PG_DB       = postgres
-PG_USER     = postgres
-PG_PASSWORD = postgres
+PG_HOST     = 'postgres'
+PG_DB       = 'postgres'
+PG_USER     = 'postgres'
+PG_PASSWORD = 'postgres'
 
-# - SL details ** PROVIDE DETAILS
+# Load environment variables
 load_dotenv()
-SL_LEADER = os.environ.get('SL_LEADER') # leader IP 
-SL_APITOKEN = os.environ.get('SL_APITOKEN') # REST API Token
+
+def get_env_value(base_var: str, default_value: str = ''):
+    dev_var = 'DEV' + base_var
+    value = os.environ.get(dev_var)
+    if value:
+        return value
+    value = os.environ.get(base_var)
+    if value:
+        return value
+    return default_value
+
 
 class PythonMiddleware():
 
     def __init__(self):
-        self.pg_client = PGClient(PG_HOST, PG_DB, PG_USER, PG_PASSWORD)
-        self.sp_client = SPClient(SL_LEADER, SL_APITOKEN)
+        pg_host = get_env_value('POSTGRES_HOST', 'postgres')
+        pg_db = get_env_value('POSTGRES_DB', 'postgres')
+        pg_user = get_env_value('POSTGRES_USER', 'postgres')
+        pg_password = get_env_value('POSTGRES_PASSWORD', 'postgres')
+        self.pg_client = PGClient(pg_host, pg_db, pg_user, pg_password)
+
+        sl_leader = get_env_value('SL_LEADER')
+        sl_token = get_env_value('SL_APITOKEN')
+        self.sp_client = SPClient(sl_leader, sl_token)
 
     def connect(self, setup):
         self.pg_conn = self.pg_client.pg_connect()
