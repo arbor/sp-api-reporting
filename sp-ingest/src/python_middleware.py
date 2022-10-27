@@ -12,10 +12,10 @@ from dotenv import load_dotenv
 
 # Parameters
 # - DB details
-PG_HOST     = "postgres"
-PG_DB       = "postgres"
-PG_USER     = "postgres"
-PG_PASSWORD = "postgres"
+PG_HOST     = postgres
+PG_DB       = postgres
+PG_USER     = postgres
+PG_PASSWORD = postgres
 
 # - SL details ** PROVIDE DETAILS
 load_dotenv()
@@ -46,45 +46,31 @@ class PythonMiddleware():
     def inital_alert_fetch(self):
         logging.info('#### Initial Alert fetch')
 
+        # First, get alerts from sightline
         alerts = self.sp_client.get_alerts()
+
+        # Then, write these alerts to postgres
         self.pg_client.pg_UPSERT_alerts(alerts)
-
-        logging.info('## Updating alert last_update timestamp...')
-        sql = '''UPDATE operational_info SET alert__last_update = %s WHERE ID = 1;'''
-        cur = self.pg_conn.cursor()
-        cur.execute(sql, [datetime.utcnow().isoformat()])
-        self.pg_conn.commit()
-
-        logging.info(' DONE', )
+        self.pg_client.update_timestamp_alert()
 
     def update_alert_fetch(self, all_alerts=False):
         logging.info('#### Update Alert fetch')
 
-        cur = self.pg_conn.cursor()
-
+        # First, get alerts from sightline
         if not all_alerts:
-            sql = '''SELECT alert__last_update FROM operational_info WHERE ID = 1;'''
-            cur.execute(sql)
-            alert__last_update = cur.fetchall()[0][0]
-            # get alerts from last update TS - 2hours
+            alert__last_update = self.pg_client.fetch_timestamp_alert()
             alert__last_update -= timedelta(minutes=60*2)
             alerts = self.sp_client.get_alerts(alert__last_update.isoformat())
         else:
             alerts = self.sp_client.get_alerts(datetime(1970, 1, 1).isoformat())
 
+        # Then, write these alerts to postgres
         self.pg_client.pg_UPSERT_alerts(alerts)
-        logging.info('## Updating alert last_update timestamp...')
-        sql = '''UPDATE operational_info SET alert__last_update = %s WHERE ID = 1;'''
-        cur.execute(sql, [datetime.utcnow().isoformat()])
-        self.pg_conn.commit()
-        logging.info(' DONE', )
+        self.pg_client.update_timestamp_alert()
 
     def ongoing_alert_fetch(self):
         logging.info('#### Ongoing Alert fetch')
-        sql = '''SELECT id FROM alert WHERE ongoing = True;'''
-        cur = self.pg_conn.cursor()
-        cur.execute(sql)
-        ongoing_alerts_rows = cur.fetchall()  # [0][0]
+        ongoing_alerts_rows = self.pg_client.get_ongoing_alerts()
         logging.info('## Alert count: {}'.format(len(ongoing_alerts_rows)))
 
         for alert_row in ongoing_alerts_rows:
