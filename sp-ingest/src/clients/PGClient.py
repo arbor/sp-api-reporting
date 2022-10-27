@@ -20,7 +20,7 @@ class PGClient:
         
     def pg_connect(self):
         try:
-            logging.info(' Connecting to database...')
+            logging.info('Connecting to database...')
             
             self.pg_conn = psycopg2.connect(
                 host=self.host,
@@ -31,6 +31,7 @@ class PGClient:
             return self.pg_conn
         except (Exception, psycopg2.DatabaseError) as error:
             logging.error(error)
+        return None
 
     def pg_close(self):
         try:
@@ -76,6 +77,19 @@ class PGClient:
             logging.error(error)
 
                 
+
+    def get_ongoing_alerts(self):
+        try:
+            pg_conn = self.pg_conn
+            cur = pg_conn.cursor()
+            sql = 'SELECT id FROM alert WHERE ongoing = True;'
+            cur.execute(sql)
+            return cur.fetchall() # This is a 2 dimensional array, rows with values
+
+        except (Exception, psycopg2.DatabaseError) as error:
+            logging.error(error)
+
+        return None
 
     def pg_UPSERT_alerts(self, alerts_with_mitigations):
         alerts = alerts_with_mitigations[0]
@@ -225,6 +239,48 @@ class PGClient:
             logging.info('## Updating alerts mitigation table... DONE')
             
 
+    def fetch_timestamp(self, field: str):
+        try:
+            pg_conn = self.pg_conn
+            cur = pg_conn.cursor()
+            sql = f'SELECT {field} FROM operational_info WHERE ID = 1;'
+            cur.execute(sql)
+            last_update = cur.fetchall()[0][0]
+            return last_update
+        except (Exception, psycopg2.DatabaseError) as error:
+            logging.error(error)
+
+        # If no success above, return None
+        return None
+
+    def fetch_timestamp_alert(self):
+        return self.fetch_timestamp('alert__last_update')
+
+    def fetch_timestamp_managed_object(self):
+        return self.fetch_timestamp('managed_object__last_update')
+
+    def update_timestamp(self, field: str):
+        try:
+            pg_conn = self.pg_conn
+            cur = pg_conn.cursor()
+            now = datetime.utcnow().isoformat()
+            sql = f'UPDATE operational_info SET {field} = \'{now}\' WHERE ID = 1;'
+            cur.execute(sql)
+            pg_conn.commit()
+        except (Exception, psycopg2.DatabaseError) as error:
+            logging.error(error)
+
+    def update_timestamp_alert(self):
+        logging.info('## Updating alerts last_update timestamp...')
+        self.update_timestamp('alert__last_update')
+        logging.info('DONE')
+
+    def update_timestamp_managed_object(self):
+        logging.info('## Updating managed objects last_update timestamp...')
+        self.update_timestamp('managed_object__last_update')
+        logging.info('DONE')
+
+
     def check_table_row_count(self, table: str, exp_cnt: int):
         cnt = self.get_table_row_count(table)
         if cnt != exp_cnt:
@@ -249,7 +305,7 @@ class PGClient:
 
 
     def verify(self):
-        logging.info('## Verifying expected data has been populated...', '')
+        logging.info('## Verifying expected data has been populated...')
 
         # Check that 7 tables have the expected number of rows
         try:
@@ -279,7 +335,7 @@ class PGClient:
         except (Exception, psycopg2.DatabaseError) as error:
             logging.error(error)
 
-        logging.info(' DONE')
+        logging.info('DONE')
         return True
 
 
