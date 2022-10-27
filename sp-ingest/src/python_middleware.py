@@ -12,10 +12,10 @@ from dotenv import load_dotenv
 
 # Parameters
 # - DB details
-PG_HOST     = os.environ.get('POSTGRES_HOST')
-PG_DB       = os.environ.get('POSTGRES_DB')
-PG_USER     = os.environ.get('POSTGRES_USER')
-PG_PASSWORD = os.environ.get('POSTGRES_PASSWORD')
+PG_HOST     = postgres
+PG_DB       = postgres
+PG_USER     = postgres
+PG_PASSWORD = postgres
 
 # - SL details ** PROVIDE DETAILS
 load_dotenv()
