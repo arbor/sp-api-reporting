@@ -2,7 +2,6 @@
 __pycache__/
 *.py[cod]
 *$py.class
-<<<<<<< .gitignore
 
 # Mac OS General (https://github.com/github/gitignore/blob/main/Global/macOS.gitignore)
 .DS_Store
