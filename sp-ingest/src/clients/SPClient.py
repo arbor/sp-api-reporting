@@ -3,6 +3,9 @@ import logging
 import requests
 import urllib.parse
 
+# File constants
+MINUTES_PER_DAY = 1440
+
 # - CERT handling
 CERT_verify = False # False or cert file
 if CERT_verify == False:
@@ -53,7 +56,11 @@ class SPClient:
 
 
 
-    def get_alerts(self, start_time = datetime(1970, 1, 1).isoformat(), alert_id = None):
+    def get_alerts(self, start_time = None, minutes_ago=30*MINUTES_PER_DAY, alert_id = None):
+        if not start_time:
+            now = datetime.utcnow()
+            start_datetime = now - timedelta(minutes=minutes_ago)
+            start_time = start_datetime.isoformat()
         if alert_id:
             logging.info('### Alert retrieval - ID: ' + str(alert_id))
         else:

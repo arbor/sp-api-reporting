@@ -355,11 +355,5 @@ class PGClient:
                         ;'''
                 cur.execute(sql, sql_values)
             self.pg_conn.commit()
-            logging.info(' DONE')
-            
-            logging.info('## Updating managed objects last_update timestamp...')
-            sql = '''UPDATE operational_info SET managed_object__last_update = %s WHERE ID = 1;'''
-            cur.execute(sql, [datetime.utcnow().isoformat()])
-            self.pg_conn.commit()
-            
-            logging.info(' DONE')
+
+        logging.info(' DONE')
