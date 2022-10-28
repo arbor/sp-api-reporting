@@ -259,20 +259,22 @@ class PGClient:
     def fetch_timestamp_managed_object(self):
         return self.fetch_timestamp('managed_object__last_update')
 
-    def update_timestamp(self, field: str):
+    def update_timestamp(self, field: str, update_time = None):
         try:
             pg_conn = self.pg_conn
             cur = pg_conn.cursor()
-            now = datetime.utcnow().isoformat()
-            sql = f'UPDATE operational_info SET {field} = \'{now}\' WHERE ID = 1;'
+            update_timestamp = datetime.utcnow().isoformat()
+            if update_time:
+                update_timestamp = update_time.isoformat()
+            sql = f'UPDATE operational_info SET {field} = \'{update_timestamp}\' WHERE ID = 1;'
             cur.execute(sql)
             pg_conn.commit()
         except (Exception, psycopg2.DatabaseError) as error:
             logging.error(error)
 
-    def update_timestamp_alert(self):
+    def update_timestamp_alert(self, update_time):
         logging.info('## Updating alerts last_update timestamp...')
-        self.update_timestamp('alert__last_update')
+        self.update_timestamp('alert__last_update', update_time)
         logging.info('DONE')
 
     def update_timestamp_managed_object(self):
