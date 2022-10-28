@@ -11,19 +11,23 @@ services:
     depends_on:
       - postgres
   postgres:
-    # Postgres 14 + SCRAM Issue: https://github.com/psycopg/psycopg2/issues/1360
-    image: postgres:13
+    image: postgres:14
     environment:
-      - POSTGRES_DB=postgres
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=${POSTGRES_DB:-postgres}
+      - POSTGRES_USER=${POSTGRES_USER:-postgres}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-postgres}
   sp-ingest:
-    image: python:3.10-bullseye
+    image: python:3.10-alpine
     volumes: 
       - ${PWD}/sp-ingest/requirements.txt:/requirements.txt
       - ${PWD}/sp-ingest/src:/src
     command: sh -c  "pip install -r requirements.txt && python3 src/python_middleware.py --setup SETUP"
-    env_file:
-      - .env
+    environment:
+      - SL_LEADER
+      - SL_APITOKEN
+      - POSTGRES_HOST=${POSTGRES_HOST:-postgres}
+      - POSTGRES_DB=${POSTGRES_DB:-postgres}
+      - POSTGRES_USER=${POSTGRES_USER:-postgres}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-postgres}
     depends_on:
       - postgres
