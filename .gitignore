@@ -1,3 +1,9 @@
+# Python (https://github.com/github/gitignore/blob/main/Python.gitignore)
 __pycache__/
 *.py[cod]
 *$py.class
+
+#Mac OS General (https://github.com/github/gitignore/blob/main/Global/macOS.gitignore)
+.DS_Store
+.AppleDouble
+.LSOverride
