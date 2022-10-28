@@ -14,11 +14,14 @@ from dotenv import load_dotenv
 # Load environment variables
 load_dotenv()
 
+# File constants
+MINUTES_PER_DAY = 1440
+
 class PythonMiddleware():
 
     # Class constants
     DEFAULT_SL_INITIAL_ALERT_FETCH_DAYS = 30
-    DEFAULT_SL_UPDATE_ALERT_FETCH_MINUTES = 1440
+    DEFAULT_SL_UPDATE_ALERT_FETCH_MINUTES = MINUTES_PER_DAY
 
     def __init__(self):
         pg_host = os.environ.get('POSTGRES_HOST')
@@ -72,7 +75,7 @@ class PythonMiddleware():
 
         # First, get alerts from sightline
         logging.info(f'   Initial days of alerts to fetch: {self.initial_days}')
-        alerts = self.sp_client.get_alerts(minutes_ago=1440*self.initial_days)
+        alerts = self.sp_client.get_alerts(minutes_ago=MINUTES_PER_DAY*self.initial_days)
 
         # Then, write these alerts to postgres
         self.pg_client.pg_UPSERT_alerts(alerts)
@@ -85,7 +88,7 @@ class PythonMiddleware():
         # First, get alerts from sightline
         if all_alerts:
             logging.info(f'   Update alerts, all alerts, days of alerts to fetch: {self.initial_days}')
-            alerts = self.sp_client.get_alerts(minutes_ago=1440*int(initial_days))
+            alerts = self.sp_client.get_alerts(minutes_ago=MINUTES_PER_DAY*int(initial_days))
         else:
             alert__last_update = self.pg_client.fetch_timestamp_alert()
             alert__last_update -= timedelta(minutes=60*2)  # get alerts from last update TS - 2 hours
