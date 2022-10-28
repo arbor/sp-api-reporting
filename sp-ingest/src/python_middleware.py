@@ -18,7 +18,7 @@ class PythonMiddleware():
 
     # Class constants
     DEFAULT_SL_INITIAL_ALERT_FETCH_DAYS = 30
-    DEFAULT_SL_UPDATE_ALERT_FETCH_DAYS = 1
+    DEFAULT_SL_UPDATE_ALERT_FETCH_MINUTES = 1440
 
     def __init__(self):
         pg_host = os.environ.get('POSTGRES_HOST')
@@ -35,15 +35,18 @@ class PythonMiddleware():
         self.sp_client = SPClient(sl_leader, sl_token)
 
         s_initial_days = os.environ.get('SL_INITIAL_ALERT_DAYS')
-        s_update_days = os.environ.get('SL_UPDATE_ALERT_DAYS')
+        s_update_minutes = os.environ.get('SL_UPDATE_ALERT_MINUTES')
         if s_initial_days and s_initial_days.isnumeric():
             self.initial_days = int(s_initial_days)
         else:
             self.initial_days = self.DEFAULT_SL_INITIAL_ALERT_FETCH_DAYS
-        if s_update_days and s_update_days.isnumeric():
-            self.update_days = int(s_update_days)
+        if s_update_minutes and s_update_minutes.isnumeric():
+            self.update_minutes = int(s_update_minutes)
         else:
-            self.update_days = self.DEFAULT_SL_UPDATE_ALERT_FETCH_DAYS
+            self.update_minutes = self.DEFAULT_SL_UPDATE_ALERT_FETCH_DAYS
+
+    def get_update_minutes(self):
+        return self.update_minutes
 
     def db_connect(self, setup):
         logging.info('#### Database connect')
@@ -69,7 +72,7 @@ class PythonMiddleware():
 
         # First, get alerts from sightline
         logging.info(f'   Initial days of alerts to fetch: {self.initial_days}')
-        alerts = self.sp_client.get_alerts(days_ago=self.initial_days)
+        alerts = self.sp_client.get_alerts(minutes_ago=1440*self.initial_days)
 
         # Then, write these alerts to postgres
         self.pg_client.pg_UPSERT_alerts(alerts)
@@ -82,15 +85,15 @@ class PythonMiddleware():
         # First, get alerts from sightline
         if all_alerts:
             logging.info(f'   Update alerts, all alerts, days of alerts to fetch: {self.initial_days}')
-            alerts = self.sp_client.get_alerts(days_ago=int(initial_days))
+            alerts = self.sp_client.get_alerts(minutes_ago=1440*int(initial_days))
         else:
             alert__last_update = self.pg_client.fetch_timestamp_alert()
             alert__last_update -= timedelta(minutes=60*2)  # get alerts from last update TS - 2 hours
             now = datetime.utcnow()
             update_timedelta = now - alert__last_update
-            if update_timedelta > timedelta(days=self.update_days):
-                logging.info(f'   Update alerts, days of alerts to fetch: {self.update_days}')
-                alerts = self.sp_client.get_alerts(days_ago=self.update_days)
+            if update_timedelta > timedelta(minutes=self.update_minutes):
+                logging.info(f'   Update alerts, minutes of alerts to fetch: {self.update_minutes}')
+                alerts = self.sp_client.get_alerts(minutes_ago=self.update_minutes)
             else:
                 logging.info(f'   Update alerts, getting alerts since timestamp of {alert__last_update}')
                 alerts = self.sp_client.get_alerts(alert__last_update.isoformat())
@@ -129,7 +132,8 @@ if __name__ == '__main__':
 
     # Subsequent updates
     while True:
-        time.sleep(60)  # To do:  Hook this up to self.update_days
+        time.sleep(60*middleware.get_update_minutes())
+
         now = datetime.utcnow()
         logging.info(f'###### Periodic update, time now is {now}')
 
