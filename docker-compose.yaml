@@ -25,6 +25,8 @@ services:
     environment:
       - SL_LEADER
       - SL_APITOKEN
+      - SL_INITIAL_ALERT_DAYS=${SL_INITIAL_ALERT_DAYS:-30}
+      - SL_UPDATE_ALERT_DAYS=${SL_UPDATE_ALERT_DAYS:-1}
       - POSTGRES_HOST=${POSTGRES_HOST:-postgres}
       - POSTGRES_DB=${POSTGRES_DB:-postgres}
       - POSTGRES_USER=${POSTGRES_USER:-postgres}
