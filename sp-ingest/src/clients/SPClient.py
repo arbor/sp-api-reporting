@@ -69,8 +69,8 @@ class SPClient:
             URL = "https://" + self.url + URI
         else:
             # Adding 2 hours of buffer like starting code in PoC--SL_alert_events_statistics_v20220927.py
-            # Hypothetically, there may be alerts that were still be processed that did not show up in last
-            # alert fetch, putting the start_time back a few hours to be safe.
+            # Hypothetically, there may be alerts that were still being processed that did not show up in last
+            # alert fetch, so we are putting the start_time back a few hours to be safe.
             buffered_start_time = start_time - timedelta(hours=2)  
             logging.info(f'### Alert retrieval from a time of {buffered_start_time} to now')
             URI = "/api/sp/alerts/?" + self.perPage + "&filter="

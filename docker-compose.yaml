@@ -21,7 +21,7 @@ services:
     volumes: 
       - ${PWD}/sp-ingest/requirements.txt:/requirements.txt
       - ${PWD}/sp-ingest/src:/src
-    command: sh -c  "pip install -r requirements.txt && python3 src/python_middleware.py --setup SETUP"
+    command: sh -c  "pip install -r requirements.txt && python3 src/python_middleware.py"
     environment:
       - SL_LEADER
       - SL_APITOKEN

@@ -52,13 +52,17 @@ class PythonMiddleware():
     def get_update_minutes(self):
         return self.update_minutes
 
-    def db_connect(self, setup):
+    def db_connect(self):
+        ''' Connect to the Postgres database.  Return true if tables needed to be created. '''
         logging.info('#### Database connect')
         self.pg_conn = self.pg_client.pg_connect()
-        if setup:
+        tables_exist = self.pg_client.are_tables_and_views_created()
+        if not tables_exist:
             logging.info('Create and initialize database tables')
             self.pg_client.pg_init()
-            
+            return True
+        return False
+
     def db_disconnect(self):
         logging.info('#### Database close')
         self.pg_client.pg_close()
@@ -69,6 +73,16 @@ class PythonMiddleware():
         MOs = self.sp_client.get_managed_objects()
         self.pg_client.pg_UPSERT_managed_objects(MOs)
         self.pg_client.update_timestamp_managed_object()
+
+    def did_initial_fetch(self):
+        logging.info('#### Did we do initial fetch?')
+        alert_ts = self.pg_client.fetch_timestamp_alert()
+        mo_ts = self.pg_client.fetch_timestamp_managed_object()
+        rval = True
+        if not alert_ts or not mo_ts or alert_ts.year == 1970 or mo_ts.year == 1970:
+            rval = False
+        logging.info(f'  Initial fetch done: {rval}')
+        return rval
 
     def initial_alert_fetch(self):
         logging.info('')
@@ -114,18 +128,14 @@ class PythonMiddleware():
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Taking Input on Script')
-    parser.add_argument('--setup', dest='setup', type=bool, default=False, 
-                        help='Setup the Database for SP Data')
-    parser.add_argument('-pg_host', dest='pg_host', type=bool, default=False, 
-                        help='Setup the Database for SP Data')
+    parser = argparse.ArgumentParser(description='Script to populate and keep updating postgres docker container.  No arguments required, as it detects what initialization is needed.')
     pars = parser.parse_args()
-    init_environment = pars.setup
 
     # Initial setup
     middleware = PythonMiddleware()
-    middleware.db_connect(init_environment)
-    if init_environment:
+    clean_new_db = middleware.db_connect()
+    need_initial_fetch = not middleware.did_initial_fetch()
+    if clean_new_db or need_initial_fetch:
         middleware.initial_alert_fetch()
         middleware.update_managed_obects_fetch()
 

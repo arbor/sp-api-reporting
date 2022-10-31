@@ -58,6 +58,24 @@ class PGClient:
         else:
             logging.error('!! ERROR: No database connection')
     
+    def are_tables_and_views_created(self):
+        try:
+            last_view = 'v_operational_info'
+            logging.info(f'Checking for last table of {last_view}...')
+            pg_conn = self.pg_conn
+            cur = pg_conn.cursor()
+            sql = f'SELECT count(*) FROM pg_class where relname=\'{last_view}\';'
+            cur.execute(sql)
+            count = cur.fetchone()[0]
+            rval = (count == 1)
+            logging.info(f'  Table found: {rval} (count of {count})')
+            return rval
+        except (Exception, psycopg2.DatabaseError) as error:
+            logging.error(error)
+            return False
+        # If no success above, return None
+        return False
+
     def pg_init(self):
         logging.info('Creating database table and views ...')
         try:
@@ -68,6 +86,7 @@ class PGClient:
                              f'{sql_dir}/drop_tables.sql',
                              f'{sql_dir}/create_tables.sql',
                              f'{sql_dir}/create_views.sql'):
+                logging.info(f'Executing sql in file {sql_file}')
                 cur.execute(open(sql_file, 'r').read())
                 pg_conn.commit()
 
