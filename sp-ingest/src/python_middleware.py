@@ -78,7 +78,7 @@ class PythonMiddleware():
         logging.info(f'   Initial days of alerts to fetch: {self.initial_days}')
         end_ts = datetime.utcnow()
         start_ts = end_ts - timedelta(days=self.initial_days)
-        alerts = self.sp_client.get_alerts(start_time=start_ts, stop_time=end_ts)
+        alerts = self.sp_client.get_alerts(start_time=start_ts)
 
         # Then, write these alerts to postgres
         self.pg_client.pg_UPSERT_alerts(alerts)
@@ -95,7 +95,7 @@ class PythonMiddleware():
         if update_timedelta > timedelta(minutes=self.update_minutes):
             logging.info(f'   Update alerts, minutes of alerts to fetch: {self.update_minutes}')
             start_ts = end_ts - timedelta(minutes=self.update_minutes)
-        alerts = self.sp_client.get_alerts(start_time=start_ts, stop_time=end_ts)
+        alerts = self.sp_client.get_alerts(start_time=start_ts)
 
         # Then, write these alerts to postgres
         self.pg_client.pg_UPSERT_alerts(alerts)
@@ -130,7 +130,7 @@ if __name__ == '__main__':
         middleware.update_managed_obects_fetch()
 
     # Subsequent updates
-    sleep_period_secs = SECONDS_PER_MINUTE*middleware.get_update_minutes()/2
+    sleep_period_secs = SECONDS_PER_MINUTE*middleware.get_update_minutes()
     while True:
         logging.info(f'## Sleeping for {sleep_period_secs} seconds')
         time.sleep(sleep_period_secs)

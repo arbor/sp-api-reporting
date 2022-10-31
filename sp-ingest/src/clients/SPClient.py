@@ -56,24 +56,28 @@ class SPClient:
 
 
 
-    def get_alerts(self, start_time = None, stop_time = None, alert_id = None):
+    def get_alerts(self, start_time = None, alert_id = None):
         if alert_id:
             logging.info('### Alert retrieval - ID: ' + str(alert_id))
         else:
-            if not start_time or not stop_time:
+            if not start_time:
                 logging.error(f'Either get alerts must supply alert_id or time window, see get_alerts().')
                 return
-            logging.info(f'### Alert retrieval from time {start_time} to {stop_time}')
             
         if alert_id != None:
             URI = "/api/sp/alerts/{}".format(alert_id)
             URL = "https://" + self.url + URI
         else:
+            # Adding 2 hours of buffer like starting code in PoC--SL_alert_events_statistics_v20220927.py
+            # Hypothetically, there may be alerts that were still be processed that did not show up in last
+            # alert fetch, putting the start_time back a few hours to be safe.
+            buffered_start_time = start_time - timedelta(hours=2)  
+            logging.info(f'### Alert retrieval from a time of {buffered_start_time} to now')
             URI = "/api/sp/alerts/?" + self.perPage + "&filter="
             FILTERs = 	['/data/attributes/alert_class=dos',
                         #'/data/attributes/alert_type=dos_host_detection', # for testing to limit runtime just fetching some alerts
-                        '/data/attributes/start_time>' + start_time.isoformat(),
-                        '/data/attributes/stop_time<' + stop_time.isoformat()
+                        '/data/attributes/start_time>' + buffered_start_time.isoformat(),
+                        # '/data/attributes/stop_time<' + stop_time.isoformat()
                         ]
             if alert_id != None:
                 FILTERs += ['/data/id={}'.format(alert_id)]
