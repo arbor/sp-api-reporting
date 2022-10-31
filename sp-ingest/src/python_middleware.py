@@ -4,7 +4,6 @@ from datetime import datetime, timedelta
 from clients.PGClient import PGClient
 from clients.SPClient import SPClient
 
-import argparse
 import logging
 logging.basicConfig(level=logging.INFO)
 import os
@@ -128,27 +127,28 @@ class PythonMiddleware():
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Script to populate and keep updating postgres docker container.  No arguments required, as it detects what initialization is needed.')
-    pars = parser.parse_args()
-
     # Initial setup
     middleware = PythonMiddleware()
     clean_new_db = middleware.db_connect()
     need_initial_fetch = not middleware.did_initial_fetch()
-    if clean_new_db or need_initial_fetch:
-        middleware.initial_alert_fetch()
-        middleware.update_managed_obects_fetch()
 
     # Subsequent updates
     sleep_period_secs = SECONDS_PER_MINUTE*middleware.get_update_minutes()
     while True:
+        if clean_new_db or need_initial_fetch:
+            middleware.initial_alert_fetch()
+            middleware.update_managed_obects_fetch()
+            # Now that we have initialized, set for periodic update
+            clean_new_db = False
+            need_initial_fetch = False
+        else:
+            logging.info(f'###### Periodic update, time now is {datetime.utcnow()}')
+            middleware.update_managed_obects_fetch()
+            middleware.update_alert_fetch()
+            middleware.ongoing_alert_fetch()
+
         logging.info(f'## Sleeping for {sleep_period_secs} seconds')
         time.sleep(sleep_period_secs)
-
-        logging.info(f'###### Periodic update, time now is {datetime.utcnow()}')
-        middleware.update_managed_obects_fetch()
-        middleware.update_alert_fetch()
-        middleware.ongoing_alert_fetch()
 
     # If we get here!, disconnect
     middleware.db_disconnect()
