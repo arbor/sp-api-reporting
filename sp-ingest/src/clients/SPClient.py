@@ -9,9 +9,9 @@ MINUTES_PER_DAY = 1440
 # - CERT handling
 CERT_verify = False # False or cert file
 if CERT_verify == False:
-	import urllib3
-	urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
- 
+    import urllib3
+    urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
  
 class SPClient:
     
@@ -56,27 +56,28 @@ class SPClient:
 
 
 
-    def get_alerts(self, start_time = None, minutes_ago=30*MINUTES_PER_DAY, alert_id = None):
-        if not start_time:
-            now = datetime.utcnow()
-            start_datetime = now - timedelta(minutes=minutes_ago)
-            start_time = start_datetime.isoformat()
+    def get_alerts(self, start_time = None, alert_id = None):
         if alert_id:
             logging.info('### Alert retrieval - ID: ' + str(alert_id))
         else:
-            logging.info('### Alert retrieval')
+            if not start_time:
+                logging.error(f'Either get alerts must supply alert_id or time window, see get_alerts().')
+                return
             
         if alert_id != None:
             URI = "/api/sp/alerts/{}".format(alert_id)
             URL = "https://" + self.url + URI
         else:
+            # Adding 2 hours of buffer like starting code in PoC--SL_alert_events_statistics_v20220927.py
+            # Hypothetically, there may be alerts that were still be processed that did not show up in last
+            # alert fetch, putting the start_time back a few hours to be safe.
+            buffered_start_time = start_time - timedelta(hours=2)  
+            logging.info(f'### Alert retrieval from a time of {buffered_start_time} to now')
             URI = "/api/sp/alerts/?" + self.perPage + "&filter="
-            # start_time = '2022-10-20T12:00:00Z' # for testing to limit runtime just fetching some alerts
-            # stop_time = '2022-10-21T00:00:00Z' # for testing to limit runtime just fetching some alerts
             FILTERs = 	['/data/attributes/alert_class=dos',
                         #'/data/attributes/alert_type=dos_host_detection', # for testing to limit runtime just fetching some alerts
-                        '/data/attributes/start_time>' + start_time,
-                        # '/data/attributes/stop_time<' + stop_time # for testing to limit runtime just fetching some alerts
+                        '/data/attributes/start_time>' + buffered_start_time.isoformat(),
+                        # '/data/attributes/stop_time<' + stop_time.isoformat()
                         ]
             if alert_id != None:
                 FILTERs += ['/data/id={}'.format(alert_id)]
@@ -85,7 +86,7 @@ class SPClient:
             api_page = 1
             URL = "https://" + self.url + URI + FILTER + "&page={}".format(api_page)
         
-        logging.info('## retrieving alerts: 0%')	
+        logging.info('## retrieving alerts: 0%')
 
         api_response = self.api_request(URL, self.api_key)
         
@@ -331,7 +332,7 @@ class SPClient:
         URI = "/api/sp/managed_objects/?" + self.perPage
         URL = "https://" + self.url + URI
         
-        logging.info('## retrieving managed objects: 0%')	
+        logging.info('## retrieving managed objects: 0%')
         
         api_response = self.api_request(URL, self.api_key)
         

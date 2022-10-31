@@ -16,6 +16,7 @@ load_dotenv()
 
 # File constants
 MINUTES_PER_DAY = 1440
+SECONDS_PER_MINUTE = 60
 
 class PythonMiddleware():
 
@@ -75,35 +76,30 @@ class PythonMiddleware():
 
         # First, get alerts from sightline
         logging.info(f'   Initial days of alerts to fetch: {self.initial_days}')
-        alerts = self.sp_client.get_alerts(minutes_ago=MINUTES_PER_DAY*self.initial_days)
+        end_ts = datetime.utcnow()
+        start_ts = end_ts - timedelta(days=self.initial_days)
+        alerts = self.sp_client.get_alerts(start_time=start_ts)
 
         # Then, write these alerts to postgres
         self.pg_client.pg_UPSERT_alerts(alerts)
-        self.pg_client.update_timestamp_alert()
+        self.pg_client.update_timestamp_alert(update_time=end_ts)
 
-    def update_alert_fetch(self, all_alerts=False):
+    def update_alert_fetch(self):
         logging.info('')
         logging.info('#### Update Alert fetch')
 
         # First, get alerts from sightline
-        if all_alerts:
-            logging.info(f'   Update alerts, all alerts, days of alerts to fetch: {self.initial_days}')
-            alerts = self.sp_client.get_alerts(minutes_ago=MINUTES_PER_DAY*int(initial_days))
-        else:
-            alert__last_update = self.pg_client.fetch_timestamp_alert()
-            alert__last_update -= timedelta(minutes=60*2)  # get alerts from last update TS - 2 hours
-            now = datetime.utcnow()
-            update_timedelta = now - alert__last_update
-            if update_timedelta > timedelta(minutes=self.update_minutes):
-                logging.info(f'   Update alerts, minutes of alerts to fetch: {self.update_minutes}')
-                alerts = self.sp_client.get_alerts(minutes_ago=self.update_minutes)
-            else:
-                logging.info(f'   Update alerts, getting alerts since timestamp of {alert__last_update}')
-                alerts = self.sp_client.get_alerts(alert__last_update.isoformat())
+        start_ts = self.pg_client.fetch_timestamp_alert()
+        end_ts = datetime.utcnow()
+        update_timedelta = end_ts - start_ts
+        if update_timedelta > timedelta(minutes=self.update_minutes):
+            logging.info(f'   Update alerts, minutes of alerts to fetch: {self.update_minutes}')
+            start_ts = end_ts - timedelta(minutes=self.update_minutes)
+        alerts = self.sp_client.get_alerts(start_time=start_ts)
 
         # Then, write these alerts to postgres
         self.pg_client.pg_UPSERT_alerts(alerts)
-        self.pg_client.update_timestamp_alert()
+        self.pg_client.update_timestamp_alert(update_time=end_ts)
 
     def ongoing_alert_fetch(self):
         logging.info('')
@@ -134,12 +130,12 @@ if __name__ == '__main__':
         middleware.update_managed_obects_fetch()
 
     # Subsequent updates
+    sleep_period_secs = SECONDS_PER_MINUTE*middleware.get_update_minutes()
     while True:
-        time.sleep(60*middleware.get_update_minutes())
+        logging.info(f'## Sleeping for {sleep_period_secs} seconds')
+        time.sleep(sleep_period_secs)
 
-        now = datetime.utcnow()
-        logging.info(f'###### Periodic update, time now is {now}')
-
+        logging.info(f'###### Periodic update, time now is {datetime.utcnow()}')
         middleware.update_managed_obects_fetch()
         middleware.update_alert_fetch()
         middleware.ongoing_alert_fetch()
