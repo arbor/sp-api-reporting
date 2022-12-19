@@ -11,7 +11,7 @@ This tool extracts data about Alerts and Mitigations from Sightline via its APIs
 
 ## Getting Started
 1. Clone this repo - `https://github.com/arbor/sp-api-reporting`
-1. Go into top level directory of this repo - `cd api-reporting`
+1. Go into top level directory of this repo - `cd sp-api-reporting`
 1. Edit `.env` file and add the SP DNS/IP and [API token](#generate-an-api-token)
 1. Start up - `docker compose up -d`
 1. Initial extract could take a while - many minutes to an hour - depending on the amount of data. [Wait for `sp-ingest` to perform the initial extract.](#wait-for-initial-extract)
